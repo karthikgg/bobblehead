@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.views.generic.edit import View, CreateView, UpdateView, DeleteView
 from django.core.urlresolvers import reverse_lazy
 # Create your views here.
 from django.http import HttpResponse
@@ -24,12 +24,20 @@ def project_detail(request, project_id):
     return render (request, 'webapp/details.html', {'project': project})
 
 
-class project_create(CreateView):
+class project_create(View):
     model = Project
     #tags = Tag.objects.all()
-    fields = ['title', 'description', 'collaborators', 'category', 'articles', Tag]
+    fields = ['title', 'description', 'collaborators', 'category', 'articles', 'tags']
 
     #fields = [ 'title', 'description' ]
+
+    def get(self, request):
+        tags = Tag.objects.all()
+        return render(request, 'webapp/project_form.html', {'tags': tags})
+
+    def post(self, request):
+        print request.POST
+        return HttpResponse()
 
 class project_update(UpdateView):
     model = Project
