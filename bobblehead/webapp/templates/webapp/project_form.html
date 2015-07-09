@@ -1,0 +1,34 @@
+<form action="{% url 'createproject' %}" method="post">
+{% csrf_token %}
+
+    <p>Title<input type="text" name="title" /></p>
+    <p>Description<input type="text" name="description" /></p>
+    <p>Collaborators<select name="collaborators">
+    {% for i in "1234567" %}
+        <option value={{i}}> {{i}}</option>
+    {% endfor %}
+    </select></p>
+    <p>Category</p>
+    <input type="radio" name="category" value="STUDENT">Student Project<br>
+    <input type="radio" name="category" value="UDACITY">Udacity Project<br>
+    <input type="radio" name="category" value="ENTERPRISE">Enterprise Project<br>
+    <input type="radio" name="category" value="OPEN SOURCE">Open Source Project<br>
+    <input type="radio" name="category" value="CONTEST">Contest<br>
+
+    <p>Articles<input type="text" name="articles" /></p>
+    <h2>This is tags: {{tags}}</h2>
+    <ul>{% for speaker in tags.all %}
+        <li>{{ speaker }}</li>
+        {% endfor %}
+    </ul>
+    {% for tag in project.tag.all %}
+        {{tag.name}}
+        {% endfor %}
+    <p>Tags<select name="tags">
+            {% for tag in tags %}
+                <option value="{{tag.tag_name}}">{{tag.tag_name}}</option>
+            {% endfor %}
+        </select></p>
+
+<input type="submit" value="createproject" />
+</form>

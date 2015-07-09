@@ -1,8 +1,9 @@
 from django.shortcuts import render
-
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.core.urlresolvers import reverse_lazy
 # Create your views here.
 from django.http import HttpResponse
-from webapp.models import Project
+from webapp.models import Project, Tag
 from django.http import Http404
 
 def index(request):
@@ -23,9 +24,26 @@ def project_detail(request, project_id):
     return render (request, 'webapp/details.html', {'project': project})
 
 
-def create_project(request):
-    """Description goes here"""
-    return render (request, 'webapp/createproject.html', context)
+class project_create(CreateView):
+    model = Project
+    #tags = Tag.objects.all()
+    fields = ['title', 'description', 'collaborators', 'category', 'articles', Tag]
+
+    #fields = [ 'title', 'description' ]
+
+class project_update(UpdateView):
+    model = Project
+    fields = ['title', 'description', 'collaborators', 'category', 'articles','tags']
+
+class project_delete(DeleteView):
+    model = Project
+    success_url = reverse_lazy('project-list')
+
+#def create_project(request):
+#    """Description goes here"""
+#    request.POST['']
+#    p = Person.objects.create(first_name="Bruce", last_name="Springsteen")
+#    return render (request, 'webapp/createproject.html', {''})
 
 def update_project(request):
     """Description goes here"""
