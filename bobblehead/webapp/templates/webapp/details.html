@@ -1,0 +1,12 @@
+<h1>{{project.title}}</h1>
+<h2>{{project.description}}</h2>
+<p>Number of collaborators: {{project.collaborators}}</p>
+<p>Posted on: {{project.posted}}</p>
+<p>Project Category: {{project.category}}</p>
+<p>Project Articles: {{project.articles}}</p>
+<p>Project Tags:</p>
+<ul>
+{% for tag in project.tags.all %}
+    <li>{{ tag.tag_name }}</li>
+{% endfor %}
+</ul>
