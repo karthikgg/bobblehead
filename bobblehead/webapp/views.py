@@ -5,6 +5,9 @@ from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponse
 from webapp.models import Project, Tag
 from django.http import Http404
+from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
+from .forms import ProjectForm
 
 def index(request):
     """Description goes here"""
@@ -15,6 +18,14 @@ def index(request):
     output = ', '.join([p.title for p in latest_project_list])
     return HttpResponse(output)
 
+def request_meta(request):
+    vl = request.META.items()
+    vl.sort()
+    html = []
+    for k,v in vl:
+        html.append('<tr><td>%s</td><td>%s</td>' %(k,v))
+    return HttpResponse ('<table>%s</table>' % '\n'.join(html))
+
 def project_detail(request, project_id):
     """Description goes here"""
     try:
@@ -23,6 +34,47 @@ def project_detail(request, project_id):
         raise Http404 ("Project does not exist")
     return render (request, 'webapp/details.html', {'project': project})
 
+def create_project(request):
+    if request.method == "POST":
+
+        form = ProjectForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            m = form.save()
+            return HttpResponseRedirect('/webapp/'+str(m.id))
+    else:
+        form = ProjectForm()
+    return render(request, 'webapp/my_template.html', {'form': form})
+
+def edit_project(request, project_id):
+    if request.method == "POST":
+        form = ProjectForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            m = form.save(commit=False)
+            m.save()
+            return HttpResponseRedirect('/webapp/'+str(m.id))
+    else:
+        #grab project
+        try:
+            project = Project.objects.get(pk=project_id)
+        except Project.DoesNotExist:
+            raise Http404 ("Project does not exist")
+        return render (request, 'webapp/edit.html', {'form': ProjectForm(instance = project)})
+    return render (request, 'webapp/details.html', {'project': project})
+    #pass it into forms
+        #form = ProjectUpdate(request.GET)
+
+"""
+def create_project(request):
+    if request.method == 'GET':
+        return render(request, 'webapp/create_project.html', {})
+    elif request.method == 'POST':
+        post = Project.objects.create(content=request.POST['content'],
+                                     created_at=datetime.utcnow())
+        # No need to call post.save() at this point -- it's already saved.
+        return HttpResponseRedirect(reverse('project_detail', kwargs={'post_id': post.id}))
+"""
 
 class project_create(View):
     model = Project
