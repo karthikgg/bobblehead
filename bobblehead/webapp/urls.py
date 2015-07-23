@@ -2,6 +2,7 @@ from django.conf.urls import url
 from webapp.views import project_create, project_delete, project_update
 from . import views
 from . import models
+from django.contrib.auth import views as auth_views
 
 
 jeff = models.Tag()
@@ -19,7 +20,7 @@ urlpatterns = [
     url(r'login_webapp/$', views.login_webapp, name='login_webapp'),
     # ex: /projects/5/
     url(r'^(?P<project_id>[0-9]+)/$', views.project_detail, name='detail'),
-    url(r'^(?P<project_id>[0-9]+)/edit$', views.edit_project, name='edit_project'),
+    url(r'^(?P<project_id>[0-9]+)/edit_project', views.edit_project, name='edit_project'),
     url(r'request_meta/$', views.request_meta, name='request_meta'),
     # ex: /projects/createproject
     #url(r'createproject/$',

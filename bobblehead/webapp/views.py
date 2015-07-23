@@ -13,7 +13,7 @@ from .forms import ProjectForm
 from django.contrib.auth import authenticate, login
 from django.conf import settings
 from django.shortcuts import redirect
-# from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
 
 def login_webapp(request):
     """ View to log in user. """
@@ -29,8 +29,10 @@ def login_webapp(request):
             print("user logged in is not active")
     else:
         print("no user!")
+        return render(request, 'webapp/login_webapp.html')
     return render(request, 'webapp/index.html')
 
+# @login_required(login_url='/webapp/login_webapp')
 def index(request):
     """ Main page. """
     print "inside index"
@@ -73,23 +75,27 @@ def create_project(request):
     return render(request, 'webapp/my_template.html', {'form': form})
 
 def edit_project(request, project_id):
+    print("inside edit_project")
+    try:
+        project = Project.objects.get(pk=project_id)
+        print ("the project is: ", project.title)
+    except Project.DoesNotExist:
+        raise Http404("Project does not exist")
+
     if request.method == "POST":
-        form = ProjectForm(request.POST)
+        form = ProjectForm(request.POST, instance=project)
         # check whether it's valid:
         if form.is_valid():
-            m = form.save(commit=False)
+            m = form.save()
             m.save()
-            return HttpResponseRedirect('/webapp/'+str(m.id))
+            return HttpResponseRedirect('/webapp/' + str(m.id))
     else:
         #grab project
-        try:
-            project = Project.objects.get(pk=project_id)
-        except Project.DoesNotExist:
-            raise Http404 ("Project does not exist")
-        return render (request, 'webapp/edit.html', {'form': ProjectForm(instance = project)})
-    return render (request, 'webapp/details.html', {'project': project})
+        print("inside the else, since we have a get request")
+        return render(request, 'webapp/edit_project.html', {'form': ProjectForm(instance=project), 'project': project})
+    return render(request, 'webapp/details.html', {'project': project})
     #pass it into forms
-        #form = ProjectUpdate(request.GET)
+    #form = ProjectUpdate(request.GET)
 
 """
 def create_project(request):
