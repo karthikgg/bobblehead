@@ -1,9 +1,32 @@
+<!DOCTYPE html>
+<head>
+  <title>Udacity Student Projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+</head>
+
+<body class="container">
+  <div class="row">
+  	<div class="col-md-12">
+  		<h1>Student submitted projects</h1>
+	 </div>
+  </div>
+
 {% if latest_project_list %}
-    <ul>
-    {% for project in latest_project_list %}
-        <li><a href="/webapp/{{ project.id }}/">{{ project.title}}</a></li>
-    {% endfor %}
+  {% for project in latest_project_list %}
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <a href="/webapp/{{ project.id }}/">{{ project.title}}</a>
+      </div>
+    </div>
+  {% endfor %}
     </ul>
 {% else %}
-    <p>No projects are available.</p>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      No projects are available.
+    </div>
+  </div>
 {% endif %}
+</body> <!-- /container -->
+</html>
