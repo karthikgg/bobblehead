@@ -9,8 +9,34 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from .forms import ProjectForm
 
+# User management imports
+from django.contrib.auth import authenticate, login
+from django.conf import settings
+from django.shortcuts import redirect
+# from django.contrib.auth.decorators import login_required
+
+def login_webapp(request):
+    """ View to log in user. """
+    username = request.POST['username']
+    password = request.POST['password']
+    print username, password
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        if user.is_active:
+            login(request, user)
+            return HttpResponseRedirect('/webapp/')
+        else:
+            print("user logged in is not active")
+    else:
+        print("no user!")
+    return render(request, 'webapp/index.html')
+
 def index(request):
-    """Description goes here"""
+    """ Main page. """
+    print "inside index"
+    if not request.user.is_authenticated():
+        return render(request, 'webapp/login_webapp.html')
+
     latest_project_list = Project.objects.order_by('posted')[:10]
     context = {'latest_project_list': latest_project_list}
     return render(request, 'webapp/index.html', context)

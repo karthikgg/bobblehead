@@ -1,4 +1,5 @@
-"""bobblehead URL Configuration
+"""
+Bobblehead URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/1.8/topics/http/urls/
@@ -18,5 +19,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^webapp/', include('webapp.urls')),
+    url(r'^webapp/', include('webapp.urls', namespace="webapp")),
+    # url(r'^user_profile/', include('user_profile.urls')),
 ]
