@@ -21,7 +21,7 @@ class Tag(models.Model):
 class Project(models.Model):
 
     """ Project class - all information about projects. """
-    # user = models.OneToOneField(User)
+    user = models.OneToOneField(User, default=None)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=5000)
     collaborators = models.IntegerField(default=1)

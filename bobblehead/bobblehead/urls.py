@@ -20,5 +20,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^webapp/', include('webapp.urls', namespace="webapp")),
-    # url(r'^user_profile/', include('user_profile.urls')),
+    url(r'^user_profile/', include('user_profile.urls', namespace="user_profile")),
 ]
