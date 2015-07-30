@@ -16,29 +16,15 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 
 
-def login_webapp(request):
-    """ View to log in user. """
-    username = request.POST['username']
-    password = request.POST['password']
-    print username, password
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            return HttpResponseRedirect('/webapp/')
-        else:
-            print("user logged in is not active")
-    else:
-        print("no user!")
-        return render(request, 'webapp/login_webapp.html')
-    return render(request, 'webapp/index.html')
+
 
 
 def index(request):
     """ Main page. """
     print "inside index"
+    print "The session object is: ", request.session.items()
     if not request.user.is_authenticated():
-        return render(request, 'webapp/login_webapp.html')
+        return render(request, 'user_profile/login_webapp.html')
     print("the user is: ", request.user.username)
     latest_project_list = Project.objects.order_by('posted')[:10]
     context = {'latest_project_list': latest_project_list}

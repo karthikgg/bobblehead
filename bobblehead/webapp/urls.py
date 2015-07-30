@@ -17,7 +17,6 @@ from django.contrib.auth import views as auth_views
 urlpatterns = [
     # ex: /projects/
     url(r'^$', views.index, name='index'),
-    url(r'login_webapp/$', views.login_webapp, name='login_webapp'),
     # ex: /projects/5/
     url(r'^(?P<project_id>[0-9]+)/$', views.project_detail, name='detail'),
     url(r'^(?P<project_id>[0-9]+)/edit_project', views.edit_project, name='edit_project'),

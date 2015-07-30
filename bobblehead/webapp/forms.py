@@ -7,7 +7,8 @@ class ProjectForm(ModelForm):
         model = Project
         # fields = ['title', 'desrciption', 'collaborators', 'posted',
         #           'category', 'articles', 'tags']
-        exclude =('user',)
+        exclude = ('user',)
+
 
 class ProjectUpdate(ModelForm):
     class Meta:
