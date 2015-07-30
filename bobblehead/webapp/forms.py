@@ -1,12 +1,15 @@
-from django import forms
+from django.forms import ModelForm
 from .models import Project
 
-class ProjectForm(forms.ModelForm):
+
+class ProjectForm(ModelForm):
     class Meta:
         model = Project
-        fields = '__all__'
+        # fields = ['title', 'desrciption', 'collaborators', 'posted',
+        #           'category', 'articles', 'tags']
+        exclude =('user',)
 
-class ProjectUpdate(forms.ModelForm):
+class ProjectUpdate(ModelForm):
     class Meta:
         model = Project
         fields = '__all__'

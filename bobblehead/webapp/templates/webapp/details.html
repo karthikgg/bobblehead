@@ -9,5 +9,7 @@
 {% for tag in project.tags.all %}
     <li>{{ tag.tag_name }}</li>
 {% endfor %}
-<a href="/webapp/{{ project.id }}/edit_project">Edit</a>
+</ul>
+<a href="{% url 'webapp:edit_project' project.id %}">Edit</a>
+<a href="{% url 'webapp:delete_project' project.id %}">Delete</a>
 </ul>

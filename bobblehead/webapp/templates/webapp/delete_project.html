@@ -1,0 +1,6 @@
+<p>Are you sure you want to delete the {{project.title}} project?</p>
+
+<form action="{% url 'webapp:delete_project' project.id%}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Submit" />
+</form>

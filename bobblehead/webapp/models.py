@@ -36,6 +36,7 @@ class Project(models.Model):
                                 default='STUDENT')
     articles = models.CharField(max_length=5000)
     tags = models.ManyToManyField(Tag)
+    last_update = models.OneToOneField(User, default=None)
 
     def get_absolute_url(self):
         """ Return the absolute URL for the project, by id. """

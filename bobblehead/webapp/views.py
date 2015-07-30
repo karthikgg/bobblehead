@@ -77,8 +77,10 @@ def create_project(request):
         form = ProjectForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            m = form.save()
-            return HttpResponseRedirect('/webapp/' + str(m.id))
+            prj_obj = form.save(commit=False)
+            prj_obj.user = request.user
+            prj_obj.save()
+            return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
     else:
         form = ProjectForm()
     return render(request, 'webapp/create_project.html', {'form': form})
@@ -109,6 +111,30 @@ def edit_project(request, project_id):
                       {'form': ProjectForm(instance=project),
                        'project': project})
     return render(request, 'webapp/details.html', {'project': project})
+
+
+def delete_project(request, project_id):
+    """ Delete a project based on user input.
+
+    GET: Return the form with project details entered
+    POST: Delete the existing project with new details
+    """
+    try:
+        project = Project.objects.get(pk=project_id)
+        print("the project is: ", project.title)
+    except Project.DoesNotExist:
+        raise Http404("Project does not exist")
+    if request.method == "POST":
+        # check whether it's valid:
+        if project:
+            project.delete()
+            return HttpResponseRedirect('/webapp/')
+    else:
+        # grab project
+        print("inside the else, since we have a get request")
+        return render(request, 'webapp/delete_project.html',
+                      {'project': project})
+    return render(request, 'webapp/delete_project.html', {'project': project})
 
 
 """
