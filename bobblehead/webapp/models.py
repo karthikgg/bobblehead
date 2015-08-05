@@ -4,6 +4,8 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
+from user_profile.models import UserProfile
+
 
 # Create your models here.
 class Tag(models.Model):
@@ -21,7 +23,8 @@ class Tag(models.Model):
 class Project(models.Model):
 
     """ Project class - all information about projects. """
-    user = models.OneToOneField(User, default=None)
+    # user = models.OneToOneField(UserProfile, default=None)
+    user = models.ForeignKey(UserProfile, default=None)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=5000)
     collaborators = models.IntegerField(default=1)

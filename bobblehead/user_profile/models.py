@@ -7,8 +7,12 @@ from django.contrib.auth.models import User
 class UserProfile(models.Model):
 
     """ User information. """
-
-    user = models.OneToOneField(User)
+    # The user variable is only used when the user signs in with
+    # the local authentication
+    user = models.OneToOneField(User, null=True)
+    email = models.CharField(max_length=100, default="")
+    nickname = models.CharField(max_length=50, default="")
+    udacity_key = models.CharField(max_length=10, default="")
     NANODEGREE_CHOICES = (('FULLSTACK', 'FullStack Developer'),
                           ('FRONTEND', 'Frontend Developer'),
                           ('ANDROID', 'Android Developer'),
@@ -19,7 +23,7 @@ class UserProfile(models.Model):
 
     def __unicode__(self):
         """ Return the username to better identify object. """
-        return self.user.username
+        return self.nickname
 
 
 # class UserProject (models.Model):

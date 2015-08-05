@@ -1,37 +1,36 @@
 from django.shortcuts import render
 # from django.views.generic.edit import View, CreateView, UpdateView, DeleteView
-from django.core.urlresolvers import reverse_lazy
 # Create your views here.
 from django.http import HttpResponse
-from webapp.models import Project, Tag
+from webapp.models import Project
 from django.http import Http404
-from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from .forms import ProjectForm
 
 # User management imports
-from django.contrib.auth import authenticate, login
-from django.conf import settings
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
+# from django.contrib.auth import authenticate, login
+# from django.conf import settings
+# from django.shortcuts import redirect
+# from django.contrib.auth.decorators import login_required
 
-
-
+from user_profile.models import UserProfile
 
 
 def index(request):
     """ Main page. """
     print "inside index"
-    print "The session object is: ", request.session.items()
-    if not request.user.is_authenticated():
-        return render(request, 'user_profile/login_webapp.html')
-    print("the user is: ", request.user.username)
+    # print "The session email is: ", request.session['email']
+    if request.user and 'udacity_key' not in request.session:
+        print "The session user is: ", request.user
+        if not request.user.is_authenticated():
+            return render(request, 'user_profile/login_webapp.html')
+        user_email = request.user.email
+    elif request.session['udacity_key']:
+        user_email = request.session['email']
+        print("the user is: ", user_email)
     latest_project_list = Project.objects.order_by('posted')[:10]
-    context = {'latest_project_list': latest_project_list}
+    context = {'latest_project_list': latest_project_list, 'user_email': user_email}
     return render(request, 'webapp/index.html', context)
-
-    output = ', '.join([p.title for p in latest_project_list])
-    return HttpResponse(output)
 
 
 def request_meta(request):
@@ -64,7 +63,8 @@ def create_project(request):
         # check whether it's valid:
         if form.is_valid():
             prj_obj = form.save(commit=False)
-            prj_obj.user = request.user
+            user_profile = UserProfile.objects.get(email=request.session['email'])
+            prj_obj.user = user_profile
             prj_obj.save()
             return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
     else:
@@ -121,63 +121,3 @@ def delete_project(request, project_id):
         return render(request, 'webapp/delete_project.html',
                       {'project': project})
     return render(request, 'webapp/delete_project.html', {'project': project})
-
-
-"""
-def create_project(request):
-    if request.method == 'GET':
-        return render(request, 'webapp/create_project.html', {})
-    elif request.method == 'POST':
-        post = Project.objects.create(content=request.POST['content'],
-                                     created_at=datetime.utcnow())
-        # No need to call post.save() at this point -- it's already saved.
-        return HttpResponseRedirect(reverse('project_detail', kwargs={'post_id': post.id}))
-"""
-
-
-# class project_create(View):
-#     model = Project
-#     #tags = Tag.objects.all()
-#     fields = ['title', 'description', 'collaborators', 'category', 'articles', 'tags']
-
-#     #fields = [ 'title', 'description' ]
-
-#     def get(self, request):
-#         tags = Tag.objects.all()
-#         return render(request, 'webapp/project_form.html', {'tags': tags})
-
-#     def post(self, request):
-#         print request.POST
-#         return HttpResponse()
-
-# class project_update(UpdateView):
-#     model = Project
-#     fields = ['title', 'description', 'collaborators', 'category', 'articles','tags']
-
-# class project_delete(DeleteView):
-#     model = Project
-#     success_url = reverse_lazy('project-list')
-
-# #def create_project(request):
-# #    """Description goes here"""
-# #    request.POST['']
-# #    p = Person.objects.create(first_name="Bruce", last_name="Springsteen")
-# #    return render (request, 'webapp/createproject.html', {''})
-
-# def update_project(request):
-#     """Description goes here"""
-
-#     return None
-
-# def delete_project(request):
-#     """Description goes here"""
-
-#     return None
-
-# def create_user(request):
-#     """Description goes here"""
-#     return None
-
-# def user_details(request, user_id):
-#     """Description goes here"""
-#     return None

@@ -3,13 +3,31 @@ from django.http import HttpResponseRedirect
 
 # from django.contrib.auth.forms import UserCreationForm
 # from webapp.models import Project
-
+from django.contrib.auth import authenticate, login, logout
 from .forms import UserProfileForm, UserForm
+from .models import UserProfile
 
+from webapp.models import Project
 # OpenID imports
 from openid.consumer import consumer
 # The standard openID formats to ask for user info, sreg is specific to openid provider
 from openid.extensions import ax, sreg
+
+
+def logout_webapp(request):
+    """ Log the user out """
+    if request.user and 'udacity_key' not in request.session:
+        # If the user was authenticated locally
+        logout(request)
+    else:
+        # If the user was authenticated using Udacity
+        try:
+            del request.session['udacity_key']
+            del request.session['email']
+            del request.session['name']
+        except KeyError:
+            pass
+    return HttpResponseRedirect('/webapp')
 
 
 def login_webapp(request):
@@ -22,6 +40,7 @@ def login_webapp(request):
     if user is not None:
         if user.is_active:
             login(request, user)
+            request.session['email'] = user.email
             return HttpResponseRedirect('/webapp/')
         else:
             print("user logged in is not active")
@@ -30,10 +49,9 @@ def login_webapp(request):
         return render(request, 'user_profile/login_webapp.html')
     return render(request, 'webapp/index.html')
 
-# Create your views here.
+
 def create_profile(request):
     """ Create profile if not exists. """
-
     if request.method == "POST":
         form_user = UserForm(request.POST)
         form_profile = UserProfileForm(request.POST)
@@ -44,6 +62,8 @@ def create_profile(request):
             # Save the profile related information later, and add user
             profile = form_profile.save(commit=False)
             profile.user = user
+            profile.email = user.email
+            profile.udacity_key = ""
             profile.save()
             return HttpResponseRedirect('/webapp/')
         else:
@@ -56,7 +76,15 @@ def create_profile(request):
                   {'form_user': form_user, 'form_profile': form_profile})
 
 
+def show_profile(request):
+    """ Show user's profile, and the project's they have created. """
+    user_profile = UserProfile.objects.get(email=request.session['email'])
+    projects_list = Project.objects.filter(user=user_profile)
+    return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list})
+
+
 def login_udacity(request):
+    """ Authenticate with Udacity using OpenID """
     if request.method == "POST":
         cons_obj = consumer.Consumer(request.session, None)
         openid_url = "https://www.udacity.com/openid"
@@ -65,13 +93,14 @@ def login_udacity(request):
         # extending the reuqest object
         sreg_request = sreg.SRegRequest(
             required=['fullname', 'email', 'nickname'],
-            )
+        )
         auth_request.addExtension(sreg_request)
 
         # To request for getting user_id @ udacity
         ax_request = ax.FetchRequest()
         # The url is associated with the user_id format at udacity
-        ax_request.add(ax.AttrInfo('http://openid.net/schema/person/guid',required=True,))
+        ax_request.add(ax.AttrInfo('http://openid.net/schema/person/guid',
+                                   required=True,))
 
         auth_request.addExtension(ax_request)
 
@@ -81,12 +110,12 @@ def login_udacity(request):
         udacity_url = auth_request.redirectURL(realm_url, return_url)
         return HttpResponseRedirect(udacity_url)
 
+
 def udacity_user(request):
+    """ Callback function for authentication with Udacity. """
     cons_obj = consumer.Consumer(request.session, None)
     path = "http://localhost:8000/user_profile/udacity_user"
     the_response = cons_obj.complete(request.GET, path)
-
-
     if the_response.status == consumer.SUCCESS:
         # Gather Info from Udacity
         sreg_response = sreg.SRegResponse.fromSuccessResponse(the_response)
@@ -100,13 +129,25 @@ def udacity_user(request):
             ax_items = {
                 'udacity_key': ax_response.get('http://openid.net/schema/person/guid')[0],
             }
-            
+        # Store items returned from Udacity in the session object
         for key in sreg_items:
             request.session[key] = sreg_items[key]
-            
         for key in ax_items:
             request.session[key] = ax_items[key]
-        return HttpResponseRedirect('/webapp/')
+
+        print "the session object is: ", request.session
+        if not UserProfile.objects.filter(udacity_key=request.session['udacity_key']).exists():
+            # base_user = User(username=request.session['email'],
+            #                  email=request.session['email'])
+            # base_user.backend = "udacity"
+            # base_user.save()
+            user_profile = UserProfile(user=None,
+                                       email=request.session['email'],
+                                       nickname=request.session['name'],
+                                       udacity_key=request.session['udacity_key'])
+
+            user_profile.save()
+        # user_profile.user(email=email=request.session['email'])
     else:
         print "Nope"
-        return HttpResponseRedirect('/webapp/')
+    return HttpResponseRedirect('/webapp/')
