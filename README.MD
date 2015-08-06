@@ -1,4 +1,4 @@
-Bobblehead - Student Project Idea Sharing Hub
+<<Bobblehead>> - Student Project Idea Sharing Hub
 
 This is a platform for posting and browsing project ideas (outside regular coursework for online education like Udacity, Coursera, etc.). The idea originated fromt the fact that after completing the Udacity nanodegree program, where do students go to advance their skills? Bobblehead portal will allow students to connect and share ideas, and maybe even collaborate on projects.
 
