@@ -14,6 +14,14 @@ from .forms import ProjectForm
 # from django.contrib.auth.decorators import login_required
 
 from user_profile.models import UserProfile
+from django.core import serializers
+import json
+
+
+def projects_JSON(request):
+    projects_as_json = serializers.serialize('json', Project.objects.all())
+    return HttpResponse(json.dumps(projects_as_json), content_type='json')
+
 
 
 def index(request):
