@@ -11,7 +11,7 @@
   		<h1>Student submitted projects</h1>
 	 </div>
   </div>
-
+<p>Welcome, <a href="{% url 'user_profile:show_profile' %}">{{ user_email }}</a>  
 {% if latest_project_list %}
   {% for project in latest_project_list %}
     <div class="panel panel-default">
@@ -30,5 +30,7 @@
 {% endif %}
 
 <a href="{% url 'webapp:create_project' %}">Create Project </a>
+
+<p><a href="{% url 'user_profile:logout_webapp' %}">Log out</a>
 </body> <!-- /container -->
 </html>

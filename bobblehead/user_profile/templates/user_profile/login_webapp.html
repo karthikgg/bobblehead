@@ -42,11 +42,12 @@
     </div>
   </form>
 
-  <a href="{% url 'user_profile:create_profile' %}">Create User</a>
+  <p><a href="{% url 'user_profile:create_profile' %}">Create User</a></p>
+  
   <form class="" action="{% url 'user_profile:login_udacity' %}" method="post">
   {% csrf_token %}
-    <input type="submit" value="login thru udactiy">Log In through Udacity!
-  }
+    <p>Log In through Udacity!</p>
+    <input type="submit" value="login thru udactiy">
   </form>
 </body>
 </html>

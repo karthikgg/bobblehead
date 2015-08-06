@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'request_meta/$', views.request_meta, name='request_meta'),
     url(r'create_project/$', views.create_project, name='create_project'),
     url(r'^(?P<project_id>[0-9]+)/delete_project', views.delete_project, name='delete_project'),
+    url(r'^projects_JSON/$', views.projects_JSON, name='projects_JSON'),
     # ex: /projects/createproject
     #url(r'createproject/$',
     #    views.project_create, name='createproject'),
