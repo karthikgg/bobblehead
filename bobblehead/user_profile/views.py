@@ -12,6 +12,22 @@ from webapp.models import Project
 from openid.consumer import consumer
 # The standard openID formats to ask for user info, sreg is specific to openid provider
 from openid.extensions import ax, sreg
+from functools import wraps
+
+
+def is_authenticated():
+    """ Decorator to check if user is authenticated """
+    def decorator(func):
+        @wraps(func)
+        def wrapper(request, *args, **kwargs):
+            # print "There are the arguments: ", kwargs
+            # request = kwargs['request']
+            if 'udacity_key' in request.session:
+                return func(request, *args, **kwargs)
+            else:
+                return render(request, 'user_profile/login_webapp.html')
+        return wrapper
+    return decorator
 
 
 def logout_webapp(request):
@@ -76,9 +92,10 @@ def create_profile(request):
                   {'form_user': form_user, 'form_profile': form_profile})
 
 
-def show_profile(request):
+@is_authenticated()
+def show(request, email):
     """ Show user's profile, and the project's they have created. """
-    user_profile = UserProfile.objects.get(email=request.session['email'])
+    user_profile = UserProfile.objects.get(email=email)
     projects_list = Project.objects.filter(user=user_profile)
     return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list})
 

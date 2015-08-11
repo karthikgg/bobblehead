@@ -11,7 +11,7 @@
   		<h1>Student submitted projects</h1>
 	 </div>
   </div>
-<p>Welcome, <a href="{% url 'user_profile:show_profile' %}">{{ user_email }}</a>  
+<p>Welcome, <a href="{% url 'user_profile:show' user_profile.email %}">{{ user_profile.nickname }}</a>  
 {% if latest_project_list %}
   {% for project in latest_project_list %}
     <div class="panel panel-default">

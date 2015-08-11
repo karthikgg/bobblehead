@@ -7,6 +7,7 @@ from django.http import Http404
 from django.http import HttpResponseRedirect
 from .forms import ProjectForm
 
+from user_profile.views import is_authenticated
 # User management imports
 # from django.contrib.auth import authenticate, login
 # from django.conf import settings
@@ -18,27 +19,32 @@ from django.core import serializers
 import json
 
 
+@is_authenticated()
 def projects_JSON(request):
     projects_as_json = serializers.serialize('json', Project.objects.all())
     return HttpResponse(json.dumps(projects_as_json), content_type='json')
 
 
-
+@is_authenticated()
 def index(request):
     """ Main page. """
     print "inside index"
     # print "The session email is: ", request.session['email']
-    if request.user and 'udacity_key' not in request.session:
-        print "The session user is: ", request.user
-        if not request.user.is_authenticated():
-            return render(request, 'user_profile/login_webapp.html')
-        user_email = request.user.email
-    elif request.session['udacity_key']:
-        user_email = request.session['email']
-        print("the user is: ", user_email)
+    # if request.user and 'udacity_key' not in request.session:
+    #     print "The session user is: ", request.user
+    #     if not request.user.is_authenticated():
+    #         return render(request, 'user_profile/login_webapp.html')
+    #     user_email = request.user.email
+    # elif request.session['udacity_key']:
+    #     user_profile = UserProfile.objects.get(email=request.session['email'])
+    #     print("the user is: ", user_profile.email)
+    # if is_authenticated(request):
+    user_profile = UserProfile.objects.get(email=request.session['email'])
     latest_project_list = Project.objects.order_by('posted')[:10]
-    context = {'latest_project_list': latest_project_list, 'user_email': user_email}
+    context = {'latest_project_list': latest_project_list, 'user_profile': user_profile}
     return render(request, 'webapp/index.html', context)
+    # else:
+    #     return render(request, 'user_profile/login_webapp.html')
 
 
 def request_meta(request):
@@ -51,6 +57,7 @@ def request_meta(request):
     return HttpResponse('<table>%s</table>' % '\n'.join(html))
 
 
+@is_authenticated()
 def project_detail(request, project_id):
     """ Return the project details by project_id. """
     try:
@@ -60,6 +67,7 @@ def project_detail(request, project_id):
     return render(request, 'webapp/details.html', {'project': project})
 
 
+@is_authenticated()
 def create_project(request):
     """ Create project from user input.
 
@@ -80,6 +88,7 @@ def create_project(request):
     return render(request, 'webapp/create_project.html', {'form': form})
 
 
+@is_authenticated()
 def edit_project(request, project_id):
     """ Edit project based on user input.
 
@@ -107,6 +116,7 @@ def edit_project(request, project_id):
     return render(request, 'webapp/details.html', {'project': project})
 
 
+@is_authenticated()
 def delete_project(request, project_id):
     """ Delete a project based on user input.
 

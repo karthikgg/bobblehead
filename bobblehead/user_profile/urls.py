@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^create_profile/$', views.create_profile, name='create_profile'),
     url(r'^udacity_user/$', views.udacity_user, name='udacity_user'),
     url(r'^logout/$', views.logout_webapp, name='logout_webapp'),
-    url(r'^show_profile/$', views.show_profile, name='show_profile'),
+    url(r'^show/(?P<email>[\w.-]+@[\w.-]+)/$', views.show, name='show'),
 ]
