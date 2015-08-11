@@ -1,0 +1,32 @@
+input[type=submit] {
+}
+
+.pad-top-20 {
+  padding-top: 20px;
+}
+.pad-10 {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.highlight {
+  background-color: #294860;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.highlight a:link, .highlight a:visited {
+  color: white;
+  text-decoration: none;
+}
+
+.sidebar {
+  background-color: #F8F8F8;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+.bottom-border {
+  border-bottom: 1px solid #AAAAAA;
+  padding-bottom: 5px;
+}
