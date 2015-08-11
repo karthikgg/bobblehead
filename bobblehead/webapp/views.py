@@ -18,10 +18,61 @@ from user_profile.models import UserProfile
 from django.core import serializers
 import json
 
+# Using this filter to test
+FILTER = [
+    {
+        "type": "order",
+        "property": "posted",
+        "value": "a"
+    },
+    {
+        "type": "filter",
+        "property": "collaborators",
+        "value": "1"
+    },
+    {
+        "type": "filter",
+        "property": "user",
+        "value": "pshev@gmail.com"
+    }
+]
+
 
 @is_authenticated()
 def projects_JSON(request):
     projects_as_json = serializers.serialize('json', Project.objects.all())
+    return HttpResponse(json.dumps(projects_as_json), content_type='json')
+
+
+def _get_projects(filters):
+    orders_query = [o for o in filters if o['type']=='order']
+    filters_query = [f for f in filters if f['type']=='filter']
+    projects = Project.objects.all()
+    query_dict = {}
+    for orders in orders_query:
+        projects = projects.order_by(orders['property'])
+    for filters in filters_query:
+        if filters['property'] =='user':
+            # If the filter is over user, find the UserProfile object
+            try:
+                user_p = UserProfile.objects.get(email=filters['value'])
+                query_dict[filters['property']] = user_p
+            except UserProfile.DoesNotExist:
+                raise Http404("Project does not exist")
+        else:
+            # Make a dictionary, property: value, and you can pass it to filter fn
+            query_dict[filters['property']] = filters['value']
+    try:
+        projects = projects.filter(**query_dict)
+    except Project.DoesNotExist:
+        raise Http404("Project does not exist")
+    return projects
+
+
+@is_authenticated()
+def query_projects(request, filters=FILTER):
+    projects = _get_projects(filters)
+    projects_as_json = serializers.serialize('json', projects)
     return HttpResponse(json.dumps(projects_as_json), content_type='json')
 
 
