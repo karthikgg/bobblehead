@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-
+from django.http import Http404
 # from django.contrib.auth.forms import UserCreationForm
 # from webapp.models import Project
-from django.contrib.auth import authenticate, login, logout
-from .forms import UserProfileForm, UserForm
+from django.contrib.auth import logout
+from .forms import UserProfileForm
 from .models import UserProfile
 
 from webapp.models import Project
@@ -48,48 +48,70 @@ def logout_webapp(request):
 
 def login_webapp(request):
     """ View to log in user. """
-    print "The session is: ", request.session
-    username = request.POST['username']
-    password = request.POST['password']
-    print username, password
-    user = authenticate(username=username, password=password)
-    if user is not None:
-        if user.is_active:
-            login(request, user)
-            request.session['email'] = user.email
-            return HttpResponseRedirect('/webapp/')
-        else:
-            print("user logged in is not active")
+    # print "The session is: ", request.session
+    # username = request.POST['username']
+    # password = request.POST['password']
+    # print username, password
+    # user = authenticate(username=username, password=password)
+    print "in login webapp: ", request.session
+    if 'email' in request.session:
+        print "User: ", request.session['email']
+        # if user.is_active:
+        #     login(request, user)
+        #     request.session['email'] = user.email
+        return HttpResponseRedirect('/webapp/')
+        # else:
+        #     print("user logged in is not active")
     else:
         print("no user!")
         return render(request, 'user_profile/login_webapp.html')
     return render(request, 'webapp/index.html')
 
 
-def create_profile(request):
-    """ Create profile if not exists. """
+# def create_profile(request):
+#     """ Create profile if not exists. """
+#     if request.method == "POST":
+#         form_user = UserForm(request.POST)
+#         form_profile = UserProfileForm(request.POST)
+#         if form_user.is_valid() and form_profile.is_valid():
+#             # Save the user information first
+#             user = form_user.save()
+#             # m.set_password(m.password)
+#             # Save the profile related information later, and add user
+#             profile = form_profile.save(commit=False)
+#             profile.user = user
+#             profile.email = user.email
+#             profile.udacity_key = ""
+#             profile.save()
+#             return HttpResponseRedirect('/webapp/')
+#         else:
+#             print "form was invalid!"
+#     else:
+#         form_user = UserForm()
+#         form_profile = UserProfileForm()
+#     # return HttpResponse("Create User Profile Here")
+#     return render(request, 'user_profile/create_profile.html',
+#                   {'form_user': form_user, 'form_profile': form_profile})
+
+
+@is_authenticated()
+def edit(request):
+    """ Edit the user's own profile """
+    try:
+        user_profile = UserProfile.objects.get(email=request.session['email'])
+        print("the name is: ", user_profile.nickname)
+    except UserProfile.DoesNotExist:
+        raise Http404("User does not exist/is not signed in")
     if request.method == "POST":
-        form_user = UserForm(request.POST)
-        form_profile = UserProfileForm(request.POST)
-        if form_user.is_valid() and form_profile.is_valid():
-            # Save the user information first
-            user = form_user.save()
-            # m.set_password(m.password)
-            # Save the profile related information later, and add user
-            profile = form_profile.save(commit=False)
-            profile.user = user
-            profile.email = user.email
-            profile.udacity_key = ""
-            profile.save()
-            return HttpResponseRedirect('/webapp/')
-        else:
-            print "form was invalid!"
+        form = UserProfileForm(request.POST, instance=user_profile)
+        # check whether it's valid:
+        if form.is_valid():
+            m = form.save()
+            m.save()
+            return HttpResponseRedirect('/user_profile/show/' + user_profile.email)
     else:
-        form_user = UserForm()
-        form_profile = UserProfileForm()
-    # return HttpResponse("Create User Profile Here")
-    return render(request, 'user_profile/create_profile.html',
-                  {'form_user': form_user, 'form_profile': form_profile})
+        return render(request, 'user_profile/edit_profile.html',
+                      {'form': UserProfileForm(instance=user_profile)})
 
 
 @is_authenticated()
