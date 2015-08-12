@@ -3,11 +3,10 @@
 
   app.controller('ProjectsController', ['$http', function($http) {
 		var data = this;
-		this.data = [];
+		data.data = [];
 		$http.get('/webapp/projects_JSON/').then(function(response){
-			this.data = JSON.parse(response.data);
-			console.log(this.data);
-
+			data.data = JSON.parse(JSON.parse(response.data));
+			
     });
 
   }]);

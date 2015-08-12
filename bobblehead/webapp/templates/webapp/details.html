@@ -1,15 +1,73 @@
-<h1>{{project.title}}</h1>
-<h2>{{project.description}}</h2>
-<p>Number of collaborators: {{project.collaborators}}</p>
-<p>Posted on: {{project.posted}}</p>
-<p>Project Category: {{project.category}}</p>
-<p>Project Articles: {{project.articles}}</p>
-<p>Project Tags:</p>
-<ul>
-{% for tag in project.tags.all %}
-    <li>{{ tag.tag_name }}</li>
-{% endfor %}
-</ul>
-<a href="{% url 'webapp:edit_project' project.id %}">Edit</a>
-<a href="{% url 'webapp:delete_project' project.id %}">Delete</a>
-</ul>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Udacity Student Projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+  {% load staticfiles %}
+  <link rel="stylesheet" type="text/css" href="{% static "bobblehead/css/bobblehead.css" %}"/>
+</head>
+
+<body class="container">
+  <div class="row pad-10 margin-top-20 highlight">
+    <div class="col-md-12">
+      <a href="{% url 'webapp:index' %}">
+        <img src="{% static "bobblehead/images/arrow-back-white-1x.png" %}" alt="Return to main page"/>
+        Back
+      </a>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h1>{{project.title}}</h1>
+      <h2>{{project.description}}</h2>
+      Posted: {{project.posted}}
+    </div>
+  </div>
+
+  <div class="row pad-top-20">
+    <div class="col-md-6">
+      <table class="table">
+        <tr>
+          <td>Category</td>
+          <td>{{ project.category }}</td>
+        </tr>
+        <tr>
+          <td>Recommended collaborators</td>
+          <td>{{ project.collaborators }}</td>
+        </tr>
+        <tr>
+          <td>Resources</td>
+          <td>{{ project.articles }}</td>
+        </tr>
+        <tr>
+          <td>Tags</td>
+          <td>
+            <ul>
+            {% for tag in project.tags.all %}
+                <li>{{ tag.tag_name }}</li>
+            {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>&nbsp</td>
+          <td>&nbsp</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <a href="{% url 'webapp:edit_project' project.id %}">
+        <img src="{% static "bobblehead/images/edit-black-2x.png" %}" alt="Edit"/>
+      </a>
+      &nbsp
+      <a href="{% url 'webapp:delete_project' project.id %}">
+        <img src="{% static "bobblehead/images/delete-black-2x.png" %}" alt="Delete"/>
+      </a>
+    </div>
+  </div>
+</body>
+</html>

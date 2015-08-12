@@ -33,9 +33,17 @@
 <input type="submit" value="create_project" />
 </form>
  -->
-
- <form action="{% url 'webapp:create_project' %}" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
-</form>
+<html>
+<head>
+  <title>Udacity Student Projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+  {% load staticfiles %}
+  <link rel="stylesheet" type="text/css" href="{% static "bobblehead/css/bobblehead.css" %}"/>
+</head>
+  <form action="{% url 'webapp:create_project' %}" method="post">
+      {% csrf_token %}
+      {{ form }}
+      <input type="submit" value="Submit" />
+  </form>
+</html>
