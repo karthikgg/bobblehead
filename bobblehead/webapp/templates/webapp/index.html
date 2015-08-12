@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="{% static "bobblehead/css/bobblehead.css" %}"/>
 </head>
 
-<body class="container" ng-controller="ProjectsController as projects">
+<body class="container">
   <div class="row">
   	<div class="col-md-12">
   		<h1>Student submitted projects</h1>
@@ -19,7 +19,7 @@
     <div class="col-md-12">
       Welcome, <a href="{% url 'user_profile:show_profile' %}">{{ user_email }}</a>
       <div class="pull-right">
-        <a href="{% url 'user_profile:logout_webapp' %}">Log out</a>
+        <b><a href="{% url 'user_profile:logout_webapp' %}">Log out</a></b>
       </div>
     </div>
   </div>
@@ -27,49 +27,51 @@
   <div class="row pad-10 highlight">
     <div class="col-md-12">
       <a href="{% url 'webapp:create_project' %}">
-        <img src="{% static "bobblehead/images/add-circle-1x.png" %}" alt="Add new project"/>
-        Add new project
+        <img src="{% static "bobblehead/images/add-circle-white-1x.png" %}" alt="Add new project"/>
+        &nbspAdd new project
       </a>
     </div>
   </div>
 
   <div class="row pad-top-20">
-    <div class="col-md-3 col-md-push-9 sidebar">
-      <h4>Filters</h4>
-      <section>
-        <div class="bottom-border"> Difficulty </div>
-        <div class="radio">
-          <label>
-            <input type="radio" name="optionsRadios" id="difficultyAll" value="all" checked>
-            All
-          </label>
-        </div>
-        <div class="radio">
-          <label>
-            <input type="radio" name="optionsRadios" id="difficultyEasy" value="easy">
-            Easy
-          </label>
-        </div>
-        <div class="radio">
-          <label>
-            <input type="radio" name="optionsRadios" id="difficultyMed" value="med">
-            Medium
-          </label>
-        </div>
-        <div class="radio">
-          <label>
-            <input type="radio" name="optionsRadios" id="difficultyHard" value="hard">
-            Hard
-          </label>
-        </div>
-      </section>
+    <div class="col-md-3 col-md-push-9">
+      <div class="sidebar">
+        <h4 class="sidebar-title">Filters</h4>
+        <section>
+          <div class="bottom-border"> Difficulty </div>
+          <div class="radio">
+            <label>
+              <input type="radio" name="optionsRadios" id="difficultyAll" value="all" checked>
+              All
+            </label>
+          </div>
+          <div class="radio">
+            <label>
+              <input type="radio" name="optionsRadios" id="difficultyEasy" value="easy">
+              Easy
+            </label>
+          </div>
+          <div class="radio">
+            <label>
+              <input type="radio" name="optionsRadios" id="difficultyMed" value="med">
+              Medium
+            </label>
+          </div>
+          <div class="radio">
+            <label>
+              <input type="radio" name="optionsRadios" id="difficultyHard" value="hard">
+              Hard
+            </label>
+          </div>
+        </section>
+      </div>
     </div>
 
-    <div class="col-md-9 col-md-pull-3">
+    <div class="col-md-9 col-md-pull-3" ng-controller="ProjectsController as projects">
       <div class="panel panel-default" ng-repeat="project in projects.data">
         <div class="panel-body">
           {% verbatim %}
-            <a href="/webapp/{{ project.id }}/">{{ project.fields.title}}</a>
+            <a href="/webapp/{{ project.fields.id }}/">{{ project.fields.title}}</a>
           {% endverbatim %}
         </div>
       </div>
