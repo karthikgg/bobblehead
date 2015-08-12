@@ -7,12 +7,25 @@
 {% endif %}
 <p>{{user_profile.email}}</p>
 <p>{{user_profile.nanodegree}}</p>
-<p>Here are the user's submitted projects: </p>
+<p>Here are the user's created projects: </p>
 <ul>
     {% for project in projects %}
     <li>{{project.title}}</li>
     {% endfor %}
 </ul>
+
+<p>Here is the user's list of submissions: </p>
+{% if submissions_list %}
+ <ul>
+  {% for submission in submissions_list %}
+  <li>
+    <a href="#">{{submission.link}}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+    <p>No submissions</p>
+{% endif %}
 
 <a href="{% url 'webapp:index' %}">Return</a>
 <a href="{% url 'user_profile:edit' %}">Edit</a>

@@ -15,6 +15,9 @@ from user_profile.views import is_authenticated
 # from django.contrib.auth.decorators import login_required
 
 from user_profile.models import UserProfile
+
+from submissions.models import Submission
+
 from django.core import serializers
 import json
 
@@ -113,9 +116,10 @@ def project_detail(request, project_id):
     """ Return the project details by project_id. """
     try:
         project = Project.objects.get(pk=project_id)
+        submissions_list = Submission.objects.filter(project=project)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
-    return render(request, 'webapp/details.html', {'project': project})
+    return render(request, 'webapp/details.html', {'project': project, 'submissions_list':submissions_list})
 
 
 @is_authenticated()

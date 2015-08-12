@@ -8,6 +8,8 @@ from .forms import UserProfileForm
 from .models import UserProfile
 
 from webapp.models import Project
+from submissions.models import Submission
+
 # OpenID imports
 from openid.consumer import consumer
 # The standard openID formats to ask for user info, sreg is specific to openid provider
@@ -117,9 +119,15 @@ def edit(request):
 @is_authenticated()
 def show(request, email):
     """ Show user's profile, and the project's they have created. """
-    user_profile = UserProfile.objects.get(email=email)
-    projects_list = Project.objects.filter(user=user_profile)
-    return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list})
+    try:
+        user_profile = UserProfile.objects.get(email=email)
+        projects_list = Project.objects.filter(user=user_profile)
+        # Return all submissions that the user has made.
+        submissions_list = Submission.objects.filter(members__in=[user_profile])
+    except UserProfile.DoesNotExist:
+        print "User Does not exist!"
+        raise Http404("User doesnt exist")
+    return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions_list})
 
 
 def login_udacity(request):

@@ -19,7 +19,7 @@ class Submission(models.Model):
 
     def __unicode__(self):
         """ Return the tag name to better identify object. """
-        return self.user.nickname + self.project.title
+        return self.project.title
 
 
 """ How to add members

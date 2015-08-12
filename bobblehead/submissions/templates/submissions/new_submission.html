@@ -1,0 +1,6 @@
+<!-- new submission html -->
+<form action="{% url 'submissions:new_submission' project_id %}" method="post">
+	{% csrf_token %}
+	{{ form }}
+	<input type="submit" value="Submit"/>
+</form>
