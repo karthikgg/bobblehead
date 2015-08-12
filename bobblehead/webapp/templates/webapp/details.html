@@ -16,7 +16,7 @@
  <ul>
   {% for submission in submissions_list %}
   <li>
-    <a href="#">{{submission.link}}</a>
+    <a href="{% url 'submissions:show_submission' submission.id %}">{{submission.link}}</a>
   </li>
   {% endfor %}
 </ul>
