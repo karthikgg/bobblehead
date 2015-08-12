@@ -11,6 +11,3 @@ class SubmissionForm(ModelForm):
     class Meta:
         model = Submission
         exclude = ('project', 'members')
-
-    # def save(self, commit=True):
-    # 	members = members_list.split(',')

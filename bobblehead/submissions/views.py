@@ -1,13 +1,15 @@
+# HTTP imports
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import Http404
 
+# Submission models, forms
 from .models import Submission
 from .forms import SubmissionForm
 
+# External App models, views
 from webapp.models import Project
 from user_profile.models import UserProfile
-
 from user_profile.views import is_authenticated
 
 

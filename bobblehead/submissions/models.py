@@ -11,8 +11,7 @@ class Submission(models.Model):
     project = models.ForeignKey(Project)
     # URLField defaults to 200 max length, to hold submission link
     link = models.URLField()
-    # user who added this submission
-    # user = models.ForeignKey(UserProfile)
+    # The user who adds the submission is automatically added
     members = models.ManyToManyField(UserProfile)
 
     description = models.TextField()
