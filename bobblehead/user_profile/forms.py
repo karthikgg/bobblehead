@@ -4,27 +4,27 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
 
-class UserForm(UserCreationForm):
+# class UserForm(UserCreationForm):
 
-    """ User Form. """
+#     """ User Form. """
 
-    email = forms.EmailField(required=True)
-    first_name = forms.CharField(required=True)
-    last_name = forms.CharField(required=True)
+#     email = forms.EmailField(required=True)
+#     first_name = forms.CharField(required=True)
+#     last_name = forms.CharField(required=True)
 
-    class Meta:
-        model = User
-        fields = ('username', 'password1', 'password2',
-                  'email', 'first_name', 'last_name')
+#     class Meta:
+#         model = User
+#         fields = ('username', 'password1', 'password2',
+#                   'email', 'first_name', 'last_name')
 
-    def save(self, commit=True):
-        """ Overwrite the save method, to save email and password. """
-        user = super(UserCreationForm, self).save(commit=False)
-        user.email = self.cleaned_data['email']
-        user.set_password(self.cleaned_data['password1'])
-        if commit:
-            user.save()
-        return user
+#     def save(self, commit=True):
+#         """ Overwrite the save method, to save email and password. """
+#         user = super(UserCreationForm, self).save(commit=False)
+#         user.email = self.cleaned_data['email']
+#         user.set_password(self.cleaned_data['password1'])
+#         if commit:
+#             user.save()
+#         return user
 
 
 class UserProfileForm(forms.ModelForm):
@@ -33,4 +33,5 @@ class UserProfileForm(forms.ModelForm):
 
     class Meta:
         model = UserProfile
-        fields = ('nickname', 'nanodegree',)
+        # don't want to change the email or the udacity key
+        exclude = ('email', 'udacity_key',)

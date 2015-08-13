@@ -71,3 +71,25 @@
   </div>
 </body>
 </html>
+
+
+<p>Here is the list of submissions for this project!</p>
+{% if submissions_list %}
+ <ul>
+  {% for submission in submissions_list %}
+  <li>
+    <a href="{% url 'submissions:show_submission' submission.id %}">{{submission.link}}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+    <p>No submissions</p>
+{% endif %}
+
+<a href="{% url 'webapp:edit_project' project.id %}">Edit</a>
+<a href="{% url 'webapp:delete_project' project.id %}">Delete</a>
+
+<p><a href="{% url 'submissions:new_submission' project.id %}">New Submission</a>
+</p>
+
+<p><a href="{% url 'webapp:index' %}">Home</a></p>
