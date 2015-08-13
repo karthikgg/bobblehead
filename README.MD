@@ -26,7 +26,47 @@ KEY FEATURES:
 - User profile will show how many projects they have added
 - User profile will show how many projects they have worked on, along with link to repo (if provided)
 - User profile will show how many people like/dislike their solution
-			
+
+
+API ENDPOINTS:
+
+- webapp/projects_JSON
+	- JSON of all projects 
+		- category (project category - student project, Udacity project, etc)
+		- articles list
+		- collaborators (# of collaborators)			
+		- description (description of project)
+		- title (of the project)
+		- tags list
+		- user (who created it) id
+		- posted on (date)
+		- model (webapp.project model)
+		- pk (primary key)
+
+
+- query_projects(request, filters)
+	- Returns JSON object similar to projects_JSON, but for filters
+	- filter has "type", "property", "value"
+	- filters can be combined (logical AND)
+	- filter type can be of type "order" (in case you want to order based on a field) or "filter" (to filter based on values)
+	- define filters as below (each 'dictionary' is a separate filter, FILTER variable is the combination of 3 filters:
+		FILTER = [
+		    {
+		        "type": "order",
+		        "property": "posted",
+		        "value": "a"
+		    },
+		    {
+		        "type": "filter",
+		        "property": "collaborators",
+		        "value": "1"
+		    },
+		    {
+		        "type": "filter",
+		        "property": "user",
+		        "value": "pshev@gmail.com"
+		    }
+		]
 
 TO DOs:
 
