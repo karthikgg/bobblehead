@@ -36,7 +36,7 @@ FILTER = [
     {
         "type": "filter",
         "property": "user",
-        "value": "pshev@gmail.com"
+        "value": "pshevade@gmail.com"
     }
 ]
 
@@ -61,19 +61,27 @@ def _get_projects(filters):
                 user_p = UserProfile.objects.get(email=filters['value'])
                 query_dict[filters['property']] = user_p
             except UserProfile.DoesNotExist:
-                raise Http404("Project does not exist")
+                raise Http404("User does not exist")
         else:
             # Make a dictionary, property: value, and you can pass it to filter fn
             query_dict[filters['property']] = filters['value']
-    try:
-        projects = projects.filter(**query_dict)
-    except Project.DoesNotExist:
-        raise Http404("Project does not exist")
+    projects = projects.filter(**query_dict)
+    # try:
+    #     projects = projects.filter(**query_dict)
+    # except Project.DoesNotExist:
+    #     raise Http404("Project does not exist")
     return projects
 
 
 @is_authenticated()
-def query_projects(request, filters=FILTER):
+def query_projects(request):
+    try:
+        filters = request.data
+        print "WE got data!"
+    except AttributeError:
+        filters = FILTER
+
+    print "Reached query_projects fn, filters are: ", filters
     projects = _get_projects(filters)
     projects_as_json = serializers.serialize('json', projects)
     return HttpResponse(json.dumps(projects_as_json), content_type='json')
