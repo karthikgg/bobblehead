@@ -46,3 +46,18 @@
   </div>
 </body>
 </html>
+
+<p>Here is the user's list of submissions: </p>
+{% if submissions_list %}
+ <ul>
+  {% for submission in submissions_list %}
+  <li>
+    <a href="#">{{submission.link}}</a>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+    <p>No submissions</p>
+{% endif %}
+
+<a href="{% url 'user_profile:edit' %}">Edit</a>
