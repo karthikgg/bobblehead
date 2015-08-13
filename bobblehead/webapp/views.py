@@ -139,8 +139,8 @@ def create_project(request):
             prj_obj.save()
             return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
     else:
-        form = ProjectForm()
-    return render(request, 'webapp/create_project.html', {'form': form})
+        pass
+    return render(request, 'webapp/create_project.html')
 
 
 @is_authenticated()
@@ -164,10 +164,10 @@ def edit_project(request, project_id):
             return HttpResponseRedirect('/webapp/' + str(m.id))
     else:
         # grab project
+        print "this is a form", ProjectForm(instance=project)
         print("inside the else, since we have a get request")
         return render(request, 'webapp/edit_project.html',
-                      {'form': ProjectForm(instance=project),
-                       'project': project})
+                      {'project': project})
     return render(request, 'webapp/details.html', {'project': project})
 
 

@@ -33,6 +33,85 @@
 <input type="submit" value="create_project" />
 </form>
  -->
+
+
+
+<!-- <form action="/webapp/create_project/" method="post">
+<input type='hidden' name='csrfmiddlewaretoken' value='vwmNgmbaODmS7bkN6Z5sIAkdNE3YtOtm' />
+
+    <p>Title<input type="text" name="title" /></p>
+    <p>Description<input type="text" name="description" /></p>
+    <p>Collaborators<select name="collaborators">
+
+        <option value=1> 1</option>
+
+        <option value=2> 2</option>
+
+        <option value=3> 3</option>
+
+        <option value=4> 4</option>
+
+        <option value=5> 5</option>
+
+        <option value=6> 6</option>
+
+        <option value=7> 7</option>
+
+    </select></p>
+    <p>Category</p>
+    <input type="radio" name="category" value="STUDENT">Student Project<br>
+    <input type="radio" name="category" value="UDACITY">Udacity Project<br>
+    <input type="radio" name="category" value="ENTERPRISE">Enterprise Project<br>
+    <input type="radio" name="category" value="OPEN SOURCE">Open Source Project<br>
+    <input type="radio" name="category" value="CONTEST">Contest<br>
+
+    <p>Articles<input type="text" name="articles" /></p>
+    <h2>This is tags: </h2>
+    <ul>
+    </ul>
+
+    <p>Tags<select name="tags">
+
+        </select></p>
+
+<input type="submit" value="create_project" />
+</form>
+ -->
+<html>
+<head>
+  <title>Udacity Student Projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+
+  <link rel="stylesheet" type="text/css" href="/static/bobblehead/css/bobblehead.css"/>
+</head>
+
+  <form action="/webapp/create_project/" method="post">
+    {% csrf_token %}
+
+      <input type='hidden' name='csrfmiddlewaretoken' value='vwmNgmbaODmS7bkN6Z5sIAkdNE3YtOtm' />
+      <tr><th><label for="id_title">Title:</label></th><td><input id="id_title" maxlength="200" name="title" type="text" /></td></tr>
+<tr><th><label for="id_description">Description:</label></th><td><input id="id_description" maxlength="5000" name="description" type="text" /></td></tr>
+<tr><th><label for="id_collaborators">Collaborators:</label></th><td><input id="id_collaborators" name="collaborators" type="number" value="1" /></td></tr>
+<tr><th><label for="id_category">Category:</label></th><td><select id="id_category" name="category">
+<option value="STUDENT" selected="selected">Student Project</option>
+<option value="UDACITY">Udacity Project</option>
+<option value="ENTERPRISE">Enterprise Project</option>
+<option value="OPEN SOURCE">Open Source</option>
+<option value="CONTEST">Contest</option>
+</select></td></tr>
+<tr><th><label for="id_articles">Articles:</label></th><td><input id="id_articles" maxlength="5000" name="articles" type="text" /></td></tr>
+<tr><th><label for="id_tags">Tags:</label></th><td><select multiple="multiple" id="id_tags" name="tags">
+<option value="1">This</option>
+<option value="2">That</option>
+</select></td></tr>
+      <input type="submit" value="Submit" />
+  </form>
+</html>
+
+
+
+<!--
 <html>
 <head>
   <title>Udacity Student Projects</title>
@@ -47,3 +126,4 @@
       <input type="submit" value="Submit" />
   </form>
 </html>
+-->
