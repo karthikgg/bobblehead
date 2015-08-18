@@ -71,7 +71,7 @@
       <div class="panel panel-default" ng-repeat="project in projects.data">
         <div class="panel-body">
           {% verbatim %}
-            <a href="/webapp/{{ project.fields.id }}/">{{ project.fields.title}}</a>
+            <a href="/webapp/{{ project.pk }}/">{{ project.fields.title}}</a>
           {% endverbatim %}
         </div>
       </div>

@@ -6,9 +6,6 @@
 		data.data = [];
 		$http.get('/webapp/projects_JSON/').then(function(response){
 			data.data = JSON.parse(JSON.parse(response.data));
-			
     });
-
   }]);
-
 })();
