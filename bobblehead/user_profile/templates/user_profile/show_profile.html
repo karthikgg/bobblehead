@@ -21,43 +21,55 @@
   <div class="row">
     <div class="col-md-12">
       <h2>Hi, {{ user_profile.nickname }}</h2>
+      <a href="{% url 'user_profile:edit' %}">Edit profile</a>
     </div>
   </div>
 
+<!--
   <div class="row">
     <div class="col-md-12">
-      <p>{{user_profile.nanodegree}}</p>
+      <p>{{ user_profile.nanodegree }}</p>
     </div>
   </div>
+-->
 
   <div class="row">
     <div class="col-md-12">
-      <h4>Your project submissions:</H4>
+      <h4>Your project ideas:</h4>
       <div class="panel panel-default">
         <div class="panel-body">
+          {% if projects %}
           <ul>
               {% for project in projects %}
-              <li>{{project.title}}</li>
+              <li><a href="/webapp/{{ project.pk }}/">{{project.title}}</a></li>
               {% endfor %}
           </ul>
+          {% else %}
+          No project ideas yet
+          {% endif %}
         </div>
       </div>
     </div>
   </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h4>Your submissions:</h4>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          {% if submissions_list %}
+          <ul>
+            {% for submission in submissions_list %}
+            <li><a href="#">{{submission.link}}</a></li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          No submissions yet
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
-
-<p>Here is the user's list of submissions: </p>
-{% if submissions_list %}
- <ul>
-  {% for submission in submissions_list %}
-  <li>
-    <a href="#">{{submission.link}}</a>
-  </li>
-  {% endfor %}
-</ul>
-{% else %}
-    <p>No submissions</p>
-{% endif %}
-
-<a href="{% url 'user_profile:edit' %}">Edit</a>

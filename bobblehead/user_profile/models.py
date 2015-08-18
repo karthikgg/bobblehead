@@ -13,7 +13,7 @@ class UserProfile(models.Model):
                           ('FRONTEND', 'Frontend Developer'),
                           ('ANDROID', 'Android Developer'),
                           ('DATA ANALYST', 'Data Analyst'),
-                          ('IOS DEVELOPER', 'IOS Developer'),)
+                          ('IOS DEVELOPER', 'IOS Developer'))
     nanodegree = models.CharField(max_length=15,
                                   choices=NANODEGREE_CHOICES,)
 

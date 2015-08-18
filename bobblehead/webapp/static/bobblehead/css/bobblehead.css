@@ -1,7 +1,6 @@
 .flex {
   display:flex;
 }
-
 .flex-vertical-center {
   align-self: center;
 }
@@ -22,6 +21,10 @@
   margin-top: 20px;
 }
 
+.subheading {
+  font-size: 2em;
+  font-weight: bold;
+}
 .highlight {
   background-color: #294860;
   -moz-border-radius: 5px;
