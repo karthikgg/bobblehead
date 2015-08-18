@@ -6,6 +6,11 @@ from django.contrib.auth.models import User
 
 from user_profile.models import UserProfile
 
+CATEGORY_CHOICES = [('STUDENT', 'Student Project'),
+                    ('UDACITY', 'Udacity Project'),
+                    ('ENTERPRISE', 'Enterprise Project'),
+                    ('OPEN SOURCE', 'Open Source'),
+                    ('CONTEST', 'Contest')]
 
 # Create your models here.
 class Tag(models.Model):
@@ -29,11 +34,6 @@ class Project(models.Model):
     description = models.CharField(max_length=5000)
     collaborators = models.IntegerField(default=1)
     posted = models.DateField(db_index=True, auto_now_add=True)
-    CATEGORY_CHOICES = (('STUDENT', 'Student Project'),
-                        ('UDACITY', 'Udacity Project'),
-                        ('ENTERPRISE', 'Enterprise Project'),
-                        ('OPEN SOURCE', 'Open Source'),
-                        ('CONTEST', 'Contest'),)
     category = models.CharField(max_length=15,
                                 choices=CATEGORY_CHOICES,
                                 default='STUDENT')

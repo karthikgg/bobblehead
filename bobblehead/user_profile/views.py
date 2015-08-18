@@ -7,7 +7,7 @@ from django.contrib.auth import logout
 from .forms import UserProfileForm
 from .models import UserProfile
 
-from webapp.models import Project
+from webapp.models import Project, CATEGORY_CHOICES
 from submissions.models import Submission
 
 # OpenID imports
@@ -101,7 +101,6 @@ def edit(request):
     """ Edit the user's own profile """
     try:
         user_profile = UserProfile.objects.get(email=request.session['email'])
-        print("the name is: ", user_profile.nickname)
     except UserProfile.DoesNotExist:
         raise Http404("User does not exist/is not signed in")
     if request.method == "POST":
@@ -113,7 +112,7 @@ def edit(request):
             return HttpResponseRedirect('/user_profile/show/' + user_profile.email)
     else:
         return render(request, 'user_profile/edit_profile.html',
-                      {'form': UserProfileForm(instance=user_profile)})
+                      {'form': UserProfileForm(instance=user_profile), 'user_profile': user_profile, 'nanodegree_choices':UserProfile.NANODEGREE_CHOICES},)
 
 
 @is_authenticated()

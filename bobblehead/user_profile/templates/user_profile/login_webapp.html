@@ -17,10 +17,13 @@
 
   <div class="row pad-top-20">
     <div class="col-md-offset-2">
-      <form class="" action="{% url 'user_profile:login_udacity' %}" method="post">
-        {% csrf_token %}
-        <input type="submit" value="Sign in with Udacity">
-      </form>
+      <div class="col-md-4 text-center">
+        <form class="" action="{% url 'user_profile:login_udacity' %}" method="post">
+          {% csrf_token %}
+          <h3>Sign in with Udacity</h3>
+          <input type="image" src="{% static "bobblehead/images/udacity-icon.png" %}" alt="Sign in with Udacity">
+        </form>
+      </div>
     </div>
   </div>
 </body>
