@@ -4,7 +4,9 @@
 .flex-vertical-center {
   align-self: center;
 }
-
+.inline {
+  display: inline;
+}
 .center {
   justify-content: center;
 }
@@ -17,8 +19,14 @@
   padding-bottom: 10px;
 }
 
+.on-top {
+  z-index: 1;
+}
 .margin-top-20 {
   margin-top: 20px;
+}
+.margin-bot-10 {
+  margin-bottom: 10px;
 }
 
 .subheading {
@@ -55,4 +63,9 @@
 
 textarea {
   resize: none;
+}
+
+.list-group-item {
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
