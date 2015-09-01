@@ -12,9 +12,9 @@ CATEGORY_CHOICES = [('STUDENT', 'Student Project'),
                     ('OPEN SOURCE', 'Open Source'),
                     ('CONTEST', 'Contest')]
 
-DIFFICULTY_LEVEL = [('EASY', 1),
-                    ('MEDIUM', 2),
-                    ('HARD', 3)]
+DIFFICULTY_LEVEL = [('EASY', 'Easy'),
+                    ('MEDIUM', 'Medium'),
+                    ('HARD', 'Hard')]
 
 # Create your models here.
 class Tag(models.Model):
@@ -41,7 +41,7 @@ class Project(models.Model):
     category = models.CharField(max_length=15,
                                 choices=CATEGORY_CHOICES,
                                 default='STUDENT')
-    difficulty = models.IntegerField(choices=DIFFICULTY_LEVEL, default=1)
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_LEVEL, default=1)
     articles = models.CharField(max_length=5000)
     tags = models.ManyToManyField(Tag)
     # Last update under work:

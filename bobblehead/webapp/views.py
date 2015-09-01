@@ -43,9 +43,29 @@ FILTER = [
 
 @is_authenticated()
 def projects_JSON(request):
-    projects_as_json = serializers.serialize('json', Project.objects.all())
-    return HttpResponse(json.dumps(projects_as_json), content_type='json')
+    # project_dict = {}
+    # projects_list = []
+    # projects_all = Project.objects.all()
 
+    # for project in projects_all:
+    #     project_dict['title'] = project.title
+    #     project_dict['posted'] = project.posted
+    #     project_dict['difficulty'] = project.difficulty
+    #     project_dict['tags'] = [tag for tag in project.tags.all()]
+    #     project_dict['nickname'] = project.user.nickname
+    #     project_dict['email'] = project.user.email
+    #     project_dict['description'] = project.description
+    #     project_dict['project_id'] = project.pk
+    #     projects_list.append(project_dict)
+    #     project_dict = {}
+    projects_as_json = serializers.serialize('json', Project.objects.all(), fields=('title',
+                                                                                    'posted',
+                                                                                    'difficulty',
+                                                                                    'tags',
+                                                                                    'user',
+                                                                                    'description',
+                                                                                    'pk'), use_natural_foreign_keys=True)
+    return HttpResponse(json.dumps(projects_as_json), content_type='json')
 
 def _get_projects(filters):
     orders_query = [o for o in filters if o['type']=='order']
@@ -142,6 +162,8 @@ def create_project(request):
         # check whether it's valid:
         if form.is_valid():
             prj_obj = form.save(commit=False)
+            print prj_obj
+            print "This is the form \n {}", form
             user_profile = UserProfile.objects.get(email=request.session['email'])
             prj_obj.user = user_profile
             prj_obj.save()
