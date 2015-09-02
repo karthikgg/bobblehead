@@ -70,6 +70,23 @@ API ENDPOINTS:
 
 TO DOs:
 
+Aug 27, 2015
+1. create difficulty level parameter to Projects model
+	- DONE Sept 1, 2015 - need to update the front end forms to add a 'difficulty parameter'.
+2. update the projects API endpoint - simplify API endpoint - title, date, difficulty, tags, username and email, project_id (primary key), description, (don't need articles, don't need collaborators, etc.)
+	- DONE Sept 1, 2015
+3. Change filter/order to :
+- Filter by difficulty (add difficulty)
+- Filter by tag (search and send back)
+- Order by date
+
+4. Backend for tags and resources (URL)
+	- DONE Sept 2, 2015 - added tags.
+5. tags should API endpoint that returns all tags
+	- DONE Sept 2, 2015 - filter by tags API endpoint added
+6. redirection to desired url after logging in.
+	- still under work.
+
 Aug 12, 2015
 - Tags and Articles - comma separated tags and new text box per article (how to do this?)
 - If a user gets added to a project but doesn't exist in the database, add only the email address or create an inactive profile, or something?

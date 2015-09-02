@@ -12,17 +12,29 @@ CATEGORY_CHOICES = [('STUDENT', 'Student Project'),
                     ('OPEN SOURCE', 'Open Source'),
                     ('CONTEST', 'Contest')]
 
-# Create your models here.
+DIFFICULTY_LEVEL = [('EASY', 'Easy'),
+                    ('MEDIUM', 'Medium'),
+                    ('HARD', 'Hard')]
+
+
 class Tag(models.Model):
 
     """ Projects are tagged for classification. """
 
-    # tags = models.ForeignKey(Project)
     tag_name = models.CharField(max_length=200)
 
     def __unicode__(self):
         """ Return the tag name to better identify object. """
         return self.tag_name
+
+
+class Articles (models.Model):
+
+    url = models.URLField(max_length=500)
+
+    def __unicode__(self):
+        """ Return the url """
+        return self.url
 
 
 class Project(models.Model):
@@ -37,10 +49,9 @@ class Project(models.Model):
     category = models.CharField(max_length=15,
                                 choices=CATEGORY_CHOICES,
                                 default='STUDENT')
+    difficulty = models.CharField(max_length=10, choices=DIFFICULTY_LEVEL, default=1)
     articles = models.CharField(max_length=5000)
     tags = models.ManyToManyField(Tag)
-    # Last update under work:
-    # last_update = models.OneToOneField(User, default=None)
 
     def get_absolute_url(self):
         """ Return the absolute URL for the project, by id. """
@@ -49,11 +60,3 @@ class Project(models.Model):
     def __unicode__(self):
         """ Return the project title to better identify object. """
         return self.title
-
-
-class TagsProject (models.Model):
-
-    """ Tags connected to set of project """
-
-    tag = models.ForeignKey(Tag)
-    project = models.ForeignKey(Project)

@@ -1,24 +1,17 @@
 from django.shortcuts import render
-# from django.views.generic.edit import View, CreateView, UpdateView, DeleteView
-# Create your views here.
 from django.http import HttpResponse
-from webapp.models import Project
+from webapp.models import Project, Tag
 from django.http import Http404
 from django.http import HttpResponseRedirect
+from django.core import serializers
+
 from .forms import ProjectForm
 
 from user_profile.views import is_authenticated
-# User management imports
-# from django.contrib.auth import authenticate, login
-# from django.conf import settings
-# from django.shortcuts import redirect
-# from django.contrib.auth.decorators import login_required
-
 from user_profile.models import UserProfile
 
 from submissions.models import Submission
 
-from django.core import serializers
 import json
 
 # Using this filter to test
@@ -30,8 +23,8 @@ FILTER = [
     },
     {
         "type": "filter",
-        "property": "collaborators",
-        "value": "1"
+        "property": "tags",
+        "value": "there"
     },
     {
         "type": "filter",
@@ -43,38 +36,70 @@ FILTER = [
 
 @is_authenticated()
 def projects_JSON(request):
-    projects_as_json = serializers.serialize('json', Project.objects.all())
+    """ Return a list of projects with only a
+        select list of fields (as set by the fields param)
+    """
+    projects_as_json = serializers.serialize(
+        'json',
+        Project.objects.all(),
+        fields=('title',
+                'posted',
+                'difficulty',
+                'tags',
+                'user',
+                'description',
+                'pk'),
+        use_natural_foreign_keys=True)
     return HttpResponse(json.dumps(projects_as_json), content_type='json')
 
 
+@is_authenticated()
+def tags_JSON(request):
+    """ Return a list of all tags. """
+    tags_as_json = serializers.serialize('json', Tag.objects.all())
+    return HttpResponse(json.dumps(tags_as_json), content_type='json')
+
+
 def _get_projects(filters):
+    """ Return projects based on a query set """
+    # First order the objects, so separate that out
     orders_query = [o for o in filters if o['type']=='order']
+    # Filter objects next, so separate those out
     filters_query = [f for f in filters if f['type']=='filter']
+
     projects = Project.objects.all()
+    # We need a dictonary to pass to Django's filter function
     query_dict = {}
+    print "The filters is: ", filters
+    # Order the projects based on the ordering queries
     for orders in orders_query:
         projects = projects.order_by(orders['property'])
+    # create the dictonary based on the filtering queries
     for filters in filters_query:
+        # First, if we want to filter by user, find the user
         if filters['property'] =='user':
-            # If the filter is over user, find the UserProfile object
             try:
                 user_p = UserProfile.objects.get(email=filters['value'])
                 query_dict[filters['property']] = user_p
             except UserProfile.DoesNotExist:
                 raise Http404("User does not exist")
+        # Second, if the filter is by tags, change the query phrase
+        # to 'tags__tag_name' - this is because tags is a ManyToManyField
+        # and we want to search by the tag_name property of Tag objects
+        elif filters['property'] == 'tags':
+            filters['property'] = 'tags__tag_name'
+            query_dict[filters['property']] = filters['value']
         else:
             # Make a dictionary, property: value, and you can pass it to filter fn
             query_dict[filters['property']] = filters['value']
     projects = projects.filter(**query_dict)
-    # try:
-    #     projects = projects.filter(**query_dict)
-    # except Project.DoesNotExist:
-    #     raise Http404("Project does not exist")
     return projects
 
 
 @is_authenticated()
 def query_projects(request):
+    """ Return projects based on a set of filters.
+        Filters will be JSON object and passed through request """
     try:
         filters = request.data
         print "WE got data!"
@@ -90,23 +115,10 @@ def query_projects(request):
 @is_authenticated()
 def index(request):
     """ Main page. """
-    print "inside index"
-    # print "The session email is: ", request.session['email']
-    # if request.user and 'udacity_key' not in request.session:
-    #     print "The session user is: ", request.user
-    #     if not request.user.is_authenticated():
-    #         return render(request, 'user_profile/login_webapp.html')
-    #     user_email = request.user.email
-    # elif request.session['udacity_key']:
-    #     user_profile = UserProfile.objects.get(email=request.session['email'])
-    #     print("the user is: ", user_profile.email)
-    # if is_authenticated(request):
     user_profile = UserProfile.objects.get(email=request.session['email'])
     latest_project_list = Project.objects.order_by('posted')[:10]
     context = {'latest_project_list': latest_project_list, 'user_profile': user_profile}
     return render(request, 'webapp/index.html', context)
-    # else:
-    #     return render(request, 'user_profile/login_webapp.html')
 
 
 def request_meta(request):
@@ -137,18 +149,55 @@ def create_project(request):
     GET: Return the form to create a project.
     POST: Create a new project and redirect to the project details
     """
+    if request.is_ajax():
+        print "it is ajax"
+        print "raw data: %s" % request.body
+    else:
+        print "this is not ajax"
     if request.method == "POST":
         form = ProjectForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             prj_obj = form.save(commit=False)
+            # fint the user profile object based on the email in session
             user_profile = UserProfile.objects.get(email=request.session['email'])
             prj_obj.user = user_profile
+            # Save the project object - project needs to exist before 
+            # manytomany field is accessed.
+            prj_obj.save()
+            # get the list of tag objects to add to project
+            tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
+            for tag_object in tag_objects_list:
+                prj_obj.tags.add(tag_object)
             prj_obj.save()
             return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
+        else:
+            print "Form is invalid"
+            print form.errors.as_data()
     else:
-        pass
-    return render(request, 'webapp/create_project.html')
+        # Remove when front end updated.
+        form = ProjectForm()
+    return render(request, 'webapp/create_project.html', {'form': form})
+
+
+def _get_tags(tag_string):
+    """ Take the string of tags, and convert into tags object
+        If tags already exist, dont create.
+        Return a list of tag objects to add to the project
+    """
+    tag_objects_list = []
+    # remove all whitespaces
+    tag_string_cleaned = tag_string.replace(" ", "")
+    tokens = tag_string_cleaned.split(',')
+    for tok in tokens:
+        try:
+            tag_object = Tag.objects.get(tag_name=tok)
+        except Tag.DoesNotExist:
+            tag_object = Tag(tag_name=tok)
+            tag_object.save()
+        if tag_object not in tag_objects_list:
+            tag_objects_list.append(tag_object)
+    return tag_objects_list
 
 
 @is_authenticated()
@@ -160,7 +209,6 @@ def edit_project(request, project_id):
     """
     try:
         project = Project.objects.get(pk=project_id)
-        print("the project is: ", project.title)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     if request.method == "POST":
@@ -171,9 +219,6 @@ def edit_project(request, project_id):
             m.save()
             return HttpResponseRedirect('/webapp/' + str(m.id))
     else:
-        # grab project
-        print "this is a form", ProjectForm(instance=project)
-        print("inside the else, since we have a get request")
         return render(request, 'webapp/edit_project.html',
                       {'project': project})
     return render(request, 'webapp/details.html', {'project': project})
@@ -188,7 +233,6 @@ def delete_project(request, project_id):
     """
     try:
         project = Project.objects.get(pk=project_id)
-        print("the project is: ", project.title)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     if request.method == "POST":
@@ -197,8 +241,6 @@ def delete_project(request, project_id):
             project.delete()
             return HttpResponseRedirect('/webapp/')
     else:
-        # grab project
-        print("inside the else, since we have a get request")
         return render(request, 'webapp/delete_project.html',
                       {'project': project})
     return render(request, 'webapp/delete_project.html', {'project': project})

@@ -2,8 +2,14 @@
 from django.db import models
 
 
+# class UserProfileManager(models.Manager):
+#     def get_by_natural_key(self, email, nickname):
+#         return self.get(email=email, nickname=nickname)
+
+
 # Create your models here.
 class UserProfile(models.Model):
+    # objects = UserProfileManager()
 
     """ User information. """
     email = models.CharField(max_length=100, default="")
@@ -20,3 +26,9 @@ class UserProfile(models.Model):
     def __unicode__(self):
         """ Return the username to better identify object. """
         return self.nickname
+
+    def natural_key(self):
+        return (self.email, self.nickname)
+
+    class Meta:
+        unique_together = (('email', 'nickname'))
