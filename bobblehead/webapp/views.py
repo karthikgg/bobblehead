@@ -2,7 +2,7 @@ from django.shortcuts import render
 # from django.views.generic.edit import View, CreateView, UpdateView, DeleteView
 # Create your views here.
 from django.http import HttpResponse
-from webapp.models import Project
+from webapp.models import Project, Tag
 from django.http import Http404
 from django.http import HttpResponseRedirect
 from .forms import ProjectForm
@@ -30,8 +30,8 @@ FILTER = [
     },
     {
         "type": "filter",
-        "property": "collaborators",
-        "value": "1"
+        "property": "tags",
+        "value": "there"
     },
     {
         "type": "filter",
@@ -43,53 +43,63 @@ FILTER = [
 
 @is_authenticated()
 def projects_JSON(request):
-    # project_dict = {}
-    # projects_list = []
-    # projects_all = Project.objects.all()
-
-    # for project in projects_all:
-    #     project_dict['title'] = project.title
-    #     project_dict['posted'] = project.posted
-    #     project_dict['difficulty'] = project.difficulty
-    #     project_dict['tags'] = [tag for tag in project.tags.all()]
-    #     project_dict['nickname'] = project.user.nickname
-    #     project_dict['email'] = project.user.email
-    #     project_dict['description'] = project.description
-    #     project_dict['project_id'] = project.pk
-    #     projects_list.append(project_dict)
-    #     project_dict = {}
-    projects_as_json = serializers.serialize('json', Project.objects.all(), fields=('title',
-                                                                                    'posted',
-                                                                                    'difficulty',
-                                                                                    'tags',
-                                                                                    'user',
-                                                                                    'description',
-                                                                                    'pk'), use_natural_foreign_keys=True)
+    """ Return a list of projects with only a
+        select list of fields (as set by the fields param)
+    """
+    projects_as_json = serializers.serialize(
+        'json',
+        Project.objects.all(),
+        fields=('title',
+                'posted',
+                'difficulty',
+                'tags',
+                'user',
+                'description',
+                'pk'),
+        use_natural_foreign_keys=True)
     return HttpResponse(json.dumps(projects_as_json), content_type='json')
 
+
+@is_authenticated()
+def tags_JSON(request):
+    """ Return a list of all tags. """
+    tags_as_json = serializers.serailize('json', Tag.objects.all())
+    return HttpResponse(json.dumps(tags_as_json), content_type='json')
+
+
 def _get_projects(filters):
+    """ Return projects based on a query set """
+    # First order the objects, so separate that out
     orders_query = [o for o in filters if o['type']=='order']
+    # Filter objects next, so separate those out
     filters_query = [f for f in filters if f['type']=='filter']
+
     projects = Project.objects.all()
+    # We need a dictonary to pass to Django's filter function
     query_dict = {}
+    print "The filters is: ", filters
+    # Order the projects based on the ordering queries
     for orders in orders_query:
         projects = projects.order_by(orders['property'])
+    # create the dictonary based on the filtering queries
     for filters in filters_query:
+        # First, if we want to filter by user, find the user
         if filters['property'] =='user':
-            # If the filter is over user, find the UserProfile object
             try:
                 user_p = UserProfile.objects.get(email=filters['value'])
                 query_dict[filters['property']] = user_p
             except UserProfile.DoesNotExist:
                 raise Http404("User does not exist")
+        # Second, if the filter is by tags, change the query phrase
+        # to 'tags__tag_name' - this is because tags is a ManyToManyField
+        # and we want to search by the tag_name property of Tag objects
+        elif filters['property'] == 'tags':
+            filters['property'] = 'tags__tag_name'
+            query_dict[filters['property']] = filters['value']
         else:
             # Make a dictionary, property: value, and you can pass it to filter fn
             query_dict[filters['property']] = filters['value']
     projects = projects.filter(**query_dict)
-    # try:
-    #     projects = projects.filter(**query_dict)
-    # except Project.DoesNotExist:
-    #     raise Http404("Project does not exist")
     return projects
 
 
@@ -159,18 +169,44 @@ def create_project(request):
     """
     if request.method == "POST":
         form = ProjectForm(request.POST)
+        print "Form is ", form.fields
+        print "Request POST is: ", request.POST
         # check whether it's valid:
         if form.is_valid():
             prj_obj = form.save(commit=False)
             print prj_obj
             print "This is the form \n {}", form
+            print "This is the tags list ", form.cleaned_data['tags_list']
+            tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
+            for tag_object in tag_objects_list:
+                prj_obj.tags.add(tag_object)
             user_profile = UserProfile.objects.get(email=request.session['email'])
             prj_obj.user = user_profile
             prj_obj.save()
             return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
+        else:
+            print "Form is invalid"
+            print form.errors.as_data()
     else:
-        pass
-    return render(request, 'webapp/create_project.html')
+        form = ProjectForm()
+    return render(request, 'webapp/create_project.html', {'form': form})
+
+
+def _get_tags(tag_string):
+    tag_objects_list = []
+    # remove all whitespaces
+    tag_string_cleaned = tag_string.replace(" ", "")
+    tokens = tag_string_cleaned.split(',')
+    for tok in tokens:
+        try:
+            tag_object = Tag.objects.get(tag_name=tok)
+        except Tag.DoesNotExist:
+            tag_object = Tag(tag_name=tok)
+            tag_object.save()
+        if tag_object not in tag_objects_list:
+            tag_objects_list.append(tag_object)
+    return tag_objects_list
+
 
 
 @is_authenticated()

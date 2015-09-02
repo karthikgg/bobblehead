@@ -37,6 +37,7 @@ def new_submission(request, project_id):
     project = Project.objects.get(pk=project_id)
     if request.method == "POST":
         submission_form = SubmissionForm(request.POST)
+        print "The request post is: ", request.POST
         if submission_form.is_valid():
             # print "The users line is: ", submission_form['members_list']
             member_emails = [request.session['email']]
