@@ -16,12 +16,11 @@ DIFFICULTY_LEVEL = [('EASY', 'Easy'),
                     ('MEDIUM', 'Medium'),
                     ('HARD', 'Hard')]
 
-# Create your models here.
+
 class Tag(models.Model):
 
     """ Projects are tagged for classification. """
 
-    # tags = models.ForeignKey(Project)
     tag_name = models.CharField(max_length=200)
 
     def __unicode__(self):
@@ -44,8 +43,6 @@ class Project(models.Model):
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_LEVEL, default=1)
     articles = models.CharField(max_length=5000)
     tags = models.ManyToManyField(Tag)
-    # Last update under work:
-    # last_update = models.OneToOneField(User, default=None)
 
     def get_absolute_url(self):
         """ Return the absolute URL for the project, by id. """

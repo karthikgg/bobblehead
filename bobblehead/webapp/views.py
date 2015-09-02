@@ -1,24 +1,17 @@
 from django.shortcuts import render
-# from django.views.generic.edit import View, CreateView, UpdateView, DeleteView
-# Create your views here.
 from django.http import HttpResponse
 from webapp.models import Project, Tag
 from django.http import Http404
 from django.http import HttpResponseRedirect
+from django.core import serializers
+
 from .forms import ProjectForm
 
 from user_profile.views import is_authenticated
-# User management imports
-# from django.contrib.auth import authenticate, login
-# from django.conf import settings
-# from django.shortcuts import redirect
-# from django.contrib.auth.decorators import login_required
-
 from user_profile.models import UserProfile
 
 from submissions.models import Submission
 
-from django.core import serializers
 import json
 
 # Using this filter to test
@@ -105,6 +98,8 @@ def _get_projects(filters):
 
 @is_authenticated()
 def query_projects(request):
+    """ Return projects based on a set of filters.
+        Filters will be JSON object and passed through request """
     try:
         filters = request.data
         print "WE got data!"
@@ -120,23 +115,10 @@ def query_projects(request):
 @is_authenticated()
 def index(request):
     """ Main page. """
-    print "inside index"
-    # print "The session email is: ", request.session['email']
-    # if request.user and 'udacity_key' not in request.session:
-    #     print "The session user is: ", request.user
-    #     if not request.user.is_authenticated():
-    #         return render(request, 'user_profile/login_webapp.html')
-    #     user_email = request.user.email
-    # elif request.session['udacity_key']:
-    #     user_profile = UserProfile.objects.get(email=request.session['email'])
-    #     print("the user is: ", user_profile.email)
-    # if is_authenticated(request):
     user_profile = UserProfile.objects.get(email=request.session['email'])
     latest_project_list = Project.objects.order_by('posted')[:10]
     context = {'latest_project_list': latest_project_list, 'user_profile': user_profile}
     return render(request, 'webapp/index.html', context)
-    # else:
-    #     return render(request, 'user_profile/login_webapp.html')
 
 
 def request_meta(request):
@@ -169,30 +151,33 @@ def create_project(request):
     """
     if request.method == "POST":
         form = ProjectForm(request.POST)
-        print "Form is ", form.fields
-        print "Request POST is: ", request.POST
         # check whether it's valid:
         if form.is_valid():
             prj_obj = form.save(commit=False)
-            print prj_obj
-            print "This is the form \n {}", form
-            print "This is the tags list ", form.cleaned_data['tags_list']
+            # get the list of tag objects to add to project
             tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
             for tag_object in tag_objects_list:
                 prj_obj.tags.add(tag_object)
+            # fint the user profile object based on the email in session
             user_profile = UserProfile.objects.get(email=request.session['email'])
             prj_obj.user = user_profile
+            # Save the project object.
             prj_obj.save()
             return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
         else:
             print "Form is invalid"
             print form.errors.as_data()
     else:
+        # Remove when front end updated.
         form = ProjectForm()
     return render(request, 'webapp/create_project.html', {'form': form})
 
 
 def _get_tags(tag_string):
+    """ Take the string of tags, and convert into tags object
+        If tags already exist, dont create.
+        Return a list of tag objects to add to the project
+    """
     tag_objects_list = []
     # remove all whitespaces
     tag_string_cleaned = tag_string.replace(" ", "")
@@ -208,7 +193,6 @@ def _get_tags(tag_string):
     return tag_objects_list
 
 
-
 @is_authenticated()
 def edit_project(request, project_id):
     """ Edit project based on user input.
@@ -218,7 +202,6 @@ def edit_project(request, project_id):
     """
     try:
         project = Project.objects.get(pk=project_id)
-        print("the project is: ", project.title)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     if request.method == "POST":
@@ -229,9 +212,6 @@ def edit_project(request, project_id):
             m.save()
             return HttpResponseRedirect('/webapp/' + str(m.id))
     else:
-        # grab project
-        print "this is a form", ProjectForm(instance=project)
-        print("inside the else, since we have a get request")
         return render(request, 'webapp/edit_project.html',
                       {'project': project})
     return render(request, 'webapp/details.html', {'project': project})
@@ -246,7 +226,6 @@ def delete_project(request, project_id):
     """
     try:
         project = Project.objects.get(pk=project_id)
-        print("the project is: ", project.title)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     if request.method == "POST":
@@ -255,8 +234,6 @@ def delete_project(request, project_id):
             project.delete()
             return HttpResponseRedirect('/webapp/')
     else:
-        # grab project
-        print("inside the else, since we have a get request")
         return render(request, 'webapp/delete_project.html',
                       {'project': project})
     return render(request, 'webapp/delete_project.html', {'project': project})
