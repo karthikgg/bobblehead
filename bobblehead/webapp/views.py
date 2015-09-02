@@ -56,7 +56,7 @@ def projects_JSON(request):
 @is_authenticated()
 def tags_JSON(request):
     """ Return a list of all tags. """
-    tags_as_json = serializers.serailize('json', Tag.objects.all())
+    tags_as_json = serializers.serialize('json', Tag.objects.all())
     return HttpResponse(json.dumps(tags_as_json), content_type='json')
 
 
@@ -149,19 +149,26 @@ def create_project(request):
     GET: Return the form to create a project.
     POST: Create a new project and redirect to the project details
     """
+    if request.is_ajax():
+        print "it is ajax"
+        print "raw data: %s" % request.body
+    else:
+        print "this is not ajax"
     if request.method == "POST":
         form = ProjectForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             prj_obj = form.save(commit=False)
+            # fint the user profile object based on the email in session
+            user_profile = UserProfile.objects.get(email=request.session['email'])
+            prj_obj.user = user_profile
+            # Save the project object - project needs to exist before 
+            # manytomany field is accessed.
+            prj_obj.save()
             # get the list of tag objects to add to project
             tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
             for tag_object in tag_objects_list:
                 prj_obj.tags.add(tag_object)
-            # fint the user profile object based on the email in session
-            user_profile = UserProfile.objects.get(email=request.session['email'])
-            prj_obj.user = user_profile
-            # Save the project object.
             prj_obj.save()
             return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
         else:

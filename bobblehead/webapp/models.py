@@ -28,6 +28,15 @@ class Tag(models.Model):
         return self.tag_name
 
 
+class Articles (models.Model):
+
+    url = models.URLField(max_length=500)
+
+    def __unicode__(self):
+        """ Return the url """
+        return self.url
+
+
 class Project(models.Model):
 
     """ Project class - all information about projects. """
@@ -51,11 +60,3 @@ class Project(models.Model):
     def __unicode__(self):
         """ Return the project title to better identify object. """
         return self.title
-
-
-class TagsProject (models.Model):
-
-    """ Tags connected to set of project """
-
-    tag = models.ForeignKey(Tag)
-    project = models.ForeignKey(Project)
