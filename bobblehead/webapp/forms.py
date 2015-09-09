@@ -9,7 +9,7 @@ class ProjectForm(ModelForm):
 
     class Meta:
         model = Project
-        exclude = ('user', 'tags', 'articles')
+        exclude = ('user', 'tags', 'articles', 'category')
 
 
 class ProjectUpdate(ModelForm):
