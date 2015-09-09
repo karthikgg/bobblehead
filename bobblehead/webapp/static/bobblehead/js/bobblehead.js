@@ -1,6 +1,12 @@
 (function(){
 	var app = angular.module('bobblehead', []);
 
+	app.config(['$httpProvider', function($httpProvider) {
+		$httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+		$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+  }]);
+
   app.controller('ProjectsController', ['$http', function($http) {
 		var data = this;
 		data.data = [];
@@ -10,7 +16,7 @@
   }]);
 
 // http://www.htmlxprs.com/post/32/creating-an-angularjs-autocomplete-tag-input-widget
-	app.controller('AutocompleteController', ['$http', function($http){
+	app.controller('FormController', ['$http', function($http){
 		// Need to get this.tages from server
 		this.tags = ['python', 'javascript', 'java', 'css', 'django', 'j', 'jello'];
 		this.tags = this.tags.sort();
@@ -63,6 +69,19 @@
 		this.removeTag = function(index) {
 			this.selectedTags.splice(index, 1);
 			console.log(this.selectedTags);
+		}
+
+		this.submit = function() {
+			var payload = {
+				'title': this.title,
+				'collaborators': 1,
+				'difficulty': this.difficulty,
+				'description': this.description,
+				'tags_list': this.selectedTags,
+
+			};
+			console.log(payload);
+			$http.post('/webapp/create_project/', payload);
 		}
 
 	}]);

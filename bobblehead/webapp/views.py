@@ -155,14 +155,18 @@ def create_project(request):
     else:
         print "this is not ajax"
     if request.method == "POST":
-        form = ProjectForm(request.POST)
+
+        temp = json.loads(request.POST.dict().keys()[0])
+        form = ProjectForm(temp)
+        print temp
+        print form.is_valid()
         # check whether it's valid:
         if form.is_valid():
             prj_obj = form.save(commit=False)
             # fint the user profile object based on the email in session
             user_profile = UserProfile.objects.get(email=request.session['email'])
             prj_obj.user = user_profile
-            # Save the project object - project needs to exist before 
+            # Save the project object - project needs to exist before
             # manytomany field is accessed.
             prj_obj.save()
             # get the list of tag objects to add to project
