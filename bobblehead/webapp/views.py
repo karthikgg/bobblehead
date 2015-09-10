@@ -158,10 +158,10 @@ def create_project(request):
 
         temp = json.loads(request.POST.dict().keys()[0])
         form = ProjectForm(temp)
-        print temp
-        print form.is_valid()
+
         # check whether it's valid:
         if form.is_valid():
+            print 'form is valid'
             prj_obj = form.save(commit=False)
             # fint the user profile object based on the email in session
             user_profile = UserProfile.objects.get(email=request.session['email'])
@@ -171,10 +171,12 @@ def create_project(request):
             prj_obj.save()
             # get the list of tag objects to add to project
             tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
+            print 'this is the tag_objects_list: ', tag_objects_list
             for tag_object in tag_objects_list:
                 prj_obj.tags.add(tag_object)
             prj_obj.save()
-            return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
+            return HttpResponse(str(prj_obj.id))
+            # return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
         else:
             print "Form is invalid"
             print form.errors.as_data()

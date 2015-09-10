@@ -16,7 +16,7 @@
   }]);
 
 // http://www.htmlxprs.com/post/32/creating-an-angularjs-autocomplete-tag-input-widget
-	app.controller('FormController', ['$http', function($http){
+	app.controller('FormController', ['$http', '$window', function($http, $window){
 		// Need to get this.tages from server
 		this.tags = ['python', 'javascript', 'java', 'css', 'django', 'j', 'jello'];
 		this.tags = this.tags.sort();
@@ -81,7 +81,10 @@
 
 			};
 			console.log(payload);
-			$http.post('/webapp/create_project/', payload);
+			$http.post('/webapp/create_project/', payload).
+				then (function(response) {
+					$window.location.href = '/webapp/' + response.data;
+				});
 		}
 
 	}]);
