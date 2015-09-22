@@ -187,8 +187,7 @@ def udacity_user(request):
             #                  email=request.session['email'])
             # base_user.backend = "udacity"
             # base_user.save()
-            user_profile = UserProfile(user=None,
-                                       email=request.session['email'],
+            user_profile = UserProfile(email=request.session['email'],
                                        nickname=request.session['name'],
                                        udacity_key=request.session['udacity_key'])
 
