@@ -84,6 +84,7 @@ WSGI_APPLICATION = 'bobblehead.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
+from config import db_settings
 DATABASES = {
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
@@ -91,11 +92,11 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'bobblehead_db',
-        'USER': 'bobblehead',
-        'PASSWORD': 'bobblehead_postgreSQL',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': db_settings.DB_NAME,
+        'USER': db_settings.DB_USER,
+        'PASSWORD': db_settings.PASSWORD,
+        'HOST': db_settings.HOST,
+        'PORT': db_settings.POST,
     }
 }
 

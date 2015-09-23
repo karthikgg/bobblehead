@@ -16,6 +16,7 @@ from openid.consumer import consumer
 from openid.extensions import ax, sreg
 from functools import wraps
 
+from config import openid_settings
 
 def is_authenticated():
     """ Decorator to check if user is authenticated """
@@ -150,8 +151,8 @@ def login_udacity(request):
 
         auth_request.addExtension(ax_request)
 
-        realm_url = 'http://localhost:8080/'
-        return_url = 'http://localhost:8080/user_profile/udacity_user'
+        realm_url = openid_settings.REALM_URL
+        return_url = openid_seettings.RETURN_URL
 
         udacity_url = auth_request.redirectURL(realm_url, return_url)
         return HttpResponseRedirect(udacity_url)
@@ -160,7 +161,7 @@ def login_udacity(request):
 def udacity_user(request):
     """ Callback function for authentication with Udacity. """
     cons_obj = consumer.Consumer(request.session, None)
-    path = "http://localhost:8080/user_profile/udacity_user"
+    path = openid_seettings.RETURN_URL
     the_response = cons_obj.complete(request.GET, path)
     if the_response.status == consumer.SUCCESS:
         # Gather Info from Udacity
