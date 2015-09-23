@@ -150,8 +150,8 @@ def login_udacity(request):
 
         auth_request.addExtension(ax_request)
 
-        realm_url = 'http://localhost:8000/'
-        return_url = 'http://localhost:8000/user_profile/udacity_user'
+        realm_url = 'http://localhost:8080/'
+        return_url = 'http://localhost:8080/user_profile/udacity_user'
 
         udacity_url = auth_request.redirectURL(realm_url, return_url)
         return HttpResponseRedirect(udacity_url)
@@ -160,7 +160,7 @@ def login_udacity(request):
 def udacity_user(request):
     """ Callback function for authentication with Udacity. """
     cons_obj = consumer.Consumer(request.session, None)
-    path = "http://localhost:8000/user_profile/udacity_user"
+    path = "http://localhost:8080/user_profile/udacity_user"
     the_response = cons_obj.complete(request.GET, path)
     if the_response.status == consumer.SUCCESS:
         # Gather Info from Udacity
