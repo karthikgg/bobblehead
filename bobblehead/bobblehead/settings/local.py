@@ -17,14 +17,12 @@ import os
 # Since we added a level (settings folder), we add a new level of os.path.dirname
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-
+from config import 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')=q%e5l$2(vnh2@ei5p&z^59j7ku=5#m@&f&u@tc=e73ywtfb5'
-
-print "Settings debug in local is : ", settings.DEBUG
+SECRET_KEY = django_secret.DJANGO_SECRET
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

@@ -18,6 +18,7 @@ from django.conf import settings
 
 print "Settings debug is: ", settings.DEBUG
 if not settings.DEBUG:
+    from config import django_secret
     print "in production!"
     # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
     import os
@@ -29,8 +30,7 @@ if not settings.DEBUG:
     # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = ')=q%e5l$2(vnh2@ei5p&z^59j7ku=5#m@&f&u@tc=e73ywtfb5'
-
+    SECRET_KEY = django_secret.DJANGO_SECRET
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = False
 
@@ -87,16 +87,44 @@ if not settings.DEBUG:
 
     WSGI_APPLICATION = 'bobblehead.wsgi.application'
 
+    LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        },
+        'logfile': {
+            'class': 'logging.handlers.WatchedFileHandler',
+            'filename': '/var/log/django/error.log'
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['logfile'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    }
+}
 
     # Database
     # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
     from config import db_settings
     DATABASES = {
-        # 'default': {
-        #     'ENGINE': 'django.db.backends.sqlite3',
-        #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        # }
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': db_settings.DB_NAME,

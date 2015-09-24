@@ -152,7 +152,7 @@ def login_udacity(request):
         auth_request.addExtension(ax_request)
 
         realm_url = openid_settings.REALM_URL
-        return_url = openid_seettings.RETURN_URL
+        return_url = openid_settings.RETURN_URL
 
         udacity_url = auth_request.redirectURL(realm_url, return_url)
         return HttpResponseRedirect(udacity_url)
@@ -161,7 +161,7 @@ def login_udacity(request):
 def udacity_user(request):
     """ Callback function for authentication with Udacity. """
     cons_obj = consumer.Consumer(request.session, None)
-    path = openid_seettings.RETURN_URL
+    path = openid_settings.RETURN_URL
     the_response = cons_obj.complete(request.GET, path)
     if the_response.status == consumer.SUCCESS:
         # Gather Info from Udacity

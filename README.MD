@@ -10,8 +10,19 @@ PREREQUISITES:
 - python-openid 2.2.5
 - SQLLite database (Django takes care of that, we want to change to POSTGRESQL)
 
+KEY NOTES:
+
+- Update config/db_settings.py with your database settings info
+- Update config/openid_settings.py with the realm/return URLS
+- Update config/django_secret.py with the django secret
+
+- Set 'DEBUG' value in bobblehead/settings/base.py to 'True' if running locally.
+
 
 KEY FEATURES:
+
+- if you want to use SQLite, comment out the links from base.py and local.py
+- Don't use SQLite in production!
 
 - Project will have the following fields: "name", "instructions"/"description", "tags", "articles"/"helpful links", "complexity", "project type", "recommended people on project"
 - You can see who created the project
