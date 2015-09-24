@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
   {% load staticfiles %}
-  <link rel="stylesheet" type="text/css" href="{% static "bobblehead/css/bobblehead.css" %}"/>
+  <link rel="stylesheet" type="text/css" href="{% static "css/bobblehead.css" %}"/>
 </head>
 
 <body class="container">
   <div class="row pad-10 margin-top-20 highlight">
     <div class="col-md-12 flex center">
-      <img src="{% static "bobblehead/images/warning-white-2x.png" %}" alt="Warning"/>
+      <img src="{% static "images/warning-white-2x.png" %}" alt="Warning"/>
       <h4 class="flex-vertical-center">&nbsp Are you sure you want to delete {{project.title}}?</h4>
     </div>
   </div>
@@ -19,10 +19,10 @@
     <div class="col-md-12 flex center">
       <form action="{% url 'webapp:delete_project' project.id%}" method="post">
           {% csrf_token %}
-          <input type="image" src="{% static "bobblehead/images/check-black-2x.png" %}" alt="Confirm" />
+          <input type="image" src="{% static "images/check-black-2x.png" %}" alt="Confirm" />
       </form>
       <a href="{% url 'webapp:index' %}">
-        <img src="{% static "bobblehead/images/cancel-black-2x.png" %}" alt="Cancel"/>
+        <img src="{% static "images/cancel-black-2x.png" %}" alt="Cancel"/>
       </a>
     </div>
   </div>
