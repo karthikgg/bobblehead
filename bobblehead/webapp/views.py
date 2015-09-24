@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from webapp.models import Project, Tag
+from webapp.models import Project, Tag, Articles
 from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.core import serializers
@@ -171,9 +171,12 @@ def create_project(request):
             prj_obj.save()
             # get the list of tag objects to add to project
             tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
+            article_object_list = _get_articles(form.cleaned_data['articles'])
             print 'this is the tag_objects_list: ', tag_objects_list
             for tag_object in tag_objects_list:
                 prj_obj.tags.add(tag_object)
+            for article_object in article_object_list:
+                prj_obj.articles.add(article_object)
             prj_obj.save()
             return HttpResponse(str(prj_obj.id))
             # return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
@@ -204,6 +207,26 @@ def _get_tags(tag_string):
         if tag_object not in tag_objects_list:
             tag_objects_list.append(tag_object)
     return tag_objects_list
+
+
+def _get_articles(article_string):
+    """ Take the string of articles, and convert into articles object
+        If article already exist, dont create.
+        Return a list of article objects to add to the project
+    """
+    article_objects_list = []
+    # remove all whitespaces
+    article_string_cleaned = article_string.replace(" ", "")
+    tokens = article_string_cleaned.split(',')
+    for tok in tokens:
+        try:
+            article_object = Articles.objects.get(url=tok)
+        except Articles.DoesNotExist:
+            article_object = Articles(url=tok)
+            article_object.save()
+        if article_object not in article_objects_list:
+            article_objects_list.append(article_object)
+    return article_objects_list
 
 
 @is_authenticated()

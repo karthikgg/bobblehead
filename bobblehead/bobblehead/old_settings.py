@@ -25,6 +25,7 @@ SECRET_KEY = ')=q%e5l$2(vnh2@ei5p&z^59j7ku=5#m@&f&u@tc=e73ywtfb5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 ALLOWED_HOSTS = []
 
 
@@ -82,9 +83,17 @@ WSGI_APPLICATION = 'bobblehead.wsgi.application'
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'bobblehead_db',
+        'USER': 'bobblehead',
+        'PASSWORD': 'bobblehead_postgreSQL',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -107,3 +116,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), "static_root")
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static", "bobblehead"),
+)

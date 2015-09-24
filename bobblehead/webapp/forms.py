@@ -5,6 +5,7 @@ from django import forms
 
 class ProjectForm(ModelForm):
     tags_list = forms.CharField()
+    articles = forms.CharField()
     # articles_list = forms.CharField()
 
     class Meta:

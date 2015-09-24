@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
   {% load staticfiles %}
-  <link rel="stylesheet" type="text/css" href="{% static "bobblehead/css/bobblehead.css" %}"/>
+  <link rel="stylesheet" type="text/css" href="{% static "css/bobblehead.css" %}"/>
 </head>
 
 <body class="container">
   <div class="row">
-  	<div class="col-md-12">
-  		<h1>Student submitted projects</h1>
-	 </div>
+    <div class="col-md-12">
+      <h1>Student submitted projects</h1>
+   </div>
   </div>
 
   <div class="row pad-10">
@@ -27,7 +27,7 @@
   <div class="row pad-10 highlight">
     <div class="col-md-12">
       <a href="{% url 'webapp:create_project' %}">
-        <img src="{% static "bobblehead/images/add-circle-white-1x.png" %}" alt="Add new project"/>
+        <img src="{% static "images/add-circle-white-1x.png" %}" alt="Add new project"/>
         &nbspAdd new project
       </a>
     </div>
@@ -80,6 +80,6 @@
   </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script>
-<script src="{% static "bobblehead/js/bobblehead.js" %}"></script>
+<script src="{% static "js/bobblehead.js" %}"></script>
 </body> <!-- /container -->
 </html>

@@ -28,7 +28,7 @@ class Tag(models.Model):
         return self.tag_name
 
 
-class Articles (models.Model):
+class Articles(models.Model):
 
     url = models.URLField(max_length=500)
 
@@ -50,7 +50,7 @@ class Project(models.Model):
                                 choices=CATEGORY_CHOICES,
                                 default='STUDENT')
     difficulty = models.CharField(max_length=10, choices=DIFFICULTY_LEVEL, default=1)
-    articles = models.CharField(max_length=5000)
+    articles = models.ManyToManyField(Articles)
     tags = models.ManyToManyField(Tag)
 
     def get_absolute_url(self):
