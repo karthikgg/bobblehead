@@ -47,6 +47,7 @@ def projects_JSON(request):
                 'posted',
                 'difficulty',
                 'tags',
+                'articles',
                 'user',
                 'description',
                 'pk'),
@@ -171,6 +172,9 @@ def create_project(request):
             # manytomany field is accessed.
             prj_obj.save()
             # get the list of tag objects to add to project
+            print "The tags list raw is: ", form.cleaned_data['tags_list']
+            print "The form title raw is: ", form.cleaned_data['title']
+            print "The title type is: ", type(form.cleaned_data['title'])
             tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
             article_object_list = _get_articles(form.cleaned_data['articles'])
             print 'this is the tag_objects_list: ', tag_objects_list
@@ -197,6 +201,7 @@ def _get_tags(tag_string):
     """
     tag_objects_list = []
     # remove all whitespaces
+    print "the tag string is of type ", type(tag_string)
     tag_string_cleaned = tag_string.replace(" ", "")
     tokens = tag_string_cleaned.split(',')
     for tok in tokens:
@@ -216,6 +221,7 @@ def _get_articles(article_string):
         Return a list of article objects to add to the project
     """
     article_objects_list = []
+    print "the article string is of type ", type(article_string)
     # remove all whitespaces
     article_string_cleaned = article_string.replace(" ", "")
     tokens = article_string_cleaned.split(',')
