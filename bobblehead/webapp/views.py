@@ -14,6 +14,7 @@ from submissions.models import Submission
 
 import json
 
+
 # Using this filter to test
 FILTER = [
     {
@@ -46,6 +47,7 @@ def projects_JSON(request):
                 'posted',
                 'difficulty',
                 'tags',
+                'articles',
                 'user',
                 'description',
                 'pk'),
@@ -151,11 +153,10 @@ def create_project(request):
     """
     if request.is_ajax():
         print "it is ajax"
-        print "raw data: %s" % request.body
     else:
         print "this is not ajax"
     if request.method == "POST":
-
+        print "raw data: %s" % request.body
         temp = json.loads(request.POST.dict().keys()[0])
         form = ProjectForm(temp)
 
@@ -170,6 +171,9 @@ def create_project(request):
             # manytomany field is accessed.
             prj_obj.save()
             # get the list of tag objects to add to project
+            print "The tags list raw is: ", form.cleaned_data['tags_list']
+            print "The form title raw is: ", form.cleaned_data['title']
+            print "The title type is: ", type(form.cleaned_data['title'])
             tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
             article_object_list = _get_articles(form.cleaned_data['articles'])
             print 'this is the tag_objects_list: ', tag_objects_list
@@ -196,6 +200,7 @@ def _get_tags(tag_string):
     """
     tag_objects_list = []
     # remove all whitespaces
+    print "the tag string is of type ", type(tag_string)
     tag_string_cleaned = tag_string.replace(" ", "")
     tokens = tag_string_cleaned.split(',')
     for tok in tokens:
@@ -215,6 +220,7 @@ def _get_articles(article_string):
         Return a list of article objects to add to the project
     """
     article_objects_list = []
+    print "the article string is of type ", type(article_string)
     # remove all whitespaces
     article_string_cleaned = article_string.replace(" ", "")
     tokens = article_string_cleaned.split(',')
@@ -240,16 +246,23 @@ def edit_project(request, project_id):
         project = Project.objects.get(pk=project_id)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
-    if request.method == "POST":
-        form = ProjectForm(request.POST, instance=project)
-        # check whether it's valid:
-        if form.is_valid():
-            m = form.save()
-            m.save()
-            return HttpResponseRedirect('/webapp/' + str(m.id))
+    # check whether the user is the one who created this project
+    print "The project's creator is: ", project.user.email
+    print "The current user is: ", request.session['email']
+
+    if project.user.email != request.session['email']:
+        return HttpResponseRedirect('/webapp/'+str(project_id))
     else:
-        return render(request, 'webapp/edit_project.html',
-                      {'project': project})
+        if request.method == "POST":
+            form = ProjectForm(request.POST, instance=project)
+            # check whether it's valid:
+            if form.is_valid():
+                m = form.save()
+                m.save()
+                return HttpResponseRedirect('/webapp/' + str(m.id))
+        else:
+            return render(request, 'webapp/edit_project.html',
+                          {'project': project})
     return render(request, 'webapp/details.html', {'project': project})
 
 
@@ -264,12 +277,17 @@ def delete_project(request, project_id):
         project = Project.objects.get(pk=project_id)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
-    if request.method == "POST":
-        # check whether it's valid:
-        if project:
-            project.delete()
-            return HttpResponseRedirect('/webapp/')
+    # check whether the user is the one who created this project
+    print "The project's creator is: ", project.user.email
+    print "The current user is: ", request.session['email']
+    if project.user.email != request.session['email']:
+        return HttpResponseRedirect('/webapp/' + str(project_id))
     else:
-        return render(request, 'webapp/delete_project.html',
-                      {'project': project})
+        if request.method == "POST":
+            if project:
+                project.delete()
+                return HttpResponseRedirect('/webapp/')
+            else:
+                return render(request, 'webapp/delete_project.html',
+                              {'project': project})
     return render(request, 'webapp/delete_project.html', {'project': project})

@@ -20,12 +20,14 @@ DIFFICULTY_LEVEL = [('EASY', 'Easy'),
 class Tag(models.Model):
 
     """ Projects are tagged for classification. """
-
     tag_name = models.CharField(max_length=200)
 
     def __unicode__(self):
         """ Return the tag name to better identify object. """
         return self.tag_name
+
+    def natural_key(self):
+        return (self.tag_name)
 
 
 class Articles(models.Model):
@@ -35,6 +37,9 @@ class Articles(models.Model):
     def __unicode__(self):
         """ Return the url """
         return self.url
+
+    def natural_key(self):
+        return (self.url)
 
 
 class Project(models.Model):
