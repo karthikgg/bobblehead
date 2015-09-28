@@ -14,6 +14,7 @@ from submissions.models import Submission
 
 import json
 
+
 # Using this filter to test
 FILTER = [
     {
@@ -240,16 +241,23 @@ def edit_project(request, project_id):
         project = Project.objects.get(pk=project_id)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
-    if request.method == "POST":
-        form = ProjectForm(request.POST, instance=project)
-        # check whether it's valid:
-        if form.is_valid():
-            m = form.save()
-            m.save()
-            return HttpResponseRedirect('/webapp/' + str(m.id))
+    # check whether the user is the one who created this project
+    print "The project's creator is: ", project.user.email
+    print "The current user is: ", request.session['email']
+
+    if project.user.email != request.session['email']:
+        return HttpResponseRedirect('/webapp/'+str(project_id))
     else:
-        return render(request, 'webapp/edit_project.html',
-                      {'project': project})
+        if request.method == "POST":
+            form = ProjectForm(request.POST, instance=project)
+            # check whether it's valid:
+            if form.is_valid():
+                m = form.save()
+                m.save()
+                return HttpResponseRedirect('/webapp/' + str(m.id))
+        else:
+            return render(request, 'webapp/edit_project.html',
+                          {'project': project})
     return render(request, 'webapp/details.html', {'project': project})
 
 
@@ -264,12 +272,17 @@ def delete_project(request, project_id):
         project = Project.objects.get(pk=project_id)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
-    if request.method == "POST":
-        # check whether it's valid:
-        if project:
-            project.delete()
-            return HttpResponseRedirect('/webapp/')
+    # check whether the user is the one who created this project
+    print "The project's creator is: ", project.user.email
+    print "The current user is: ", request.session['email']
+    if project.user.email != request.session['email']:
+        return HttpResponseRedirect('/webapp/' + str(project_id))
     else:
-        return render(request, 'webapp/delete_project.html',
-                      {'project': project})
+        if request.method == "POST":
+            if project:
+                project.delete()
+                return HttpResponseRedirect('/webapp/')
+            else:
+                return render(request, 'webapp/delete_project.html',
+                              {'project': project})
     return render(request, 'webapp/delete_project.html', {'project': project})
