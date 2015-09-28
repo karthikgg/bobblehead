@@ -153,11 +153,10 @@ def create_project(request):
     """
     if request.is_ajax():
         print "it is ajax"
-        print "raw data: %s" % request.body
     else:
         print "this is not ajax"
     if request.method == "POST":
-
+        print "raw data: %s" % request.body
         temp = json.loads(request.POST.dict().keys()[0])
         form = ProjectForm(temp)
 

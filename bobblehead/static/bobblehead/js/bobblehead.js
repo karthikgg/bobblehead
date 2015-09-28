@@ -26,7 +26,7 @@
 		// Tags!
 		this.searchText = '';
 		this.suggestions = [];
-		this.selectedTags = [];
+		this.selectedTags = []
 		this.selectedIndex = 0;
 
 		this.search = function() {
@@ -85,20 +85,22 @@
 
 		// Articles
 		this.article = '';
-		this.articles = [];
+		this.articleslist = []
 		this.maxArticlesText = '';
 		this.maxArticles = 5;
-
+		
 		this.addArticle = function(event) {
 			if (event.keyCode === 13 || event.keyCode === 9) { //Enter or Tab pressed
 				// To-dp: validate for URL instead of >0
-				if (this.article.length > 0 && this.articles.indexOf(this.article) == -1) {
+				if (this.article.length > 0 && this.articleslist.indexOf(this.article) == -1) {
 					event.preventDefault();
-					if (this.articles.length < this.maxArticles) {
-						this.articles.push(this.article);
+					if (this.maxArticles > 0) {
+						// this.articles += this.article + ', ';
+						this.articleslist.push(this.article)
 						this.article = '';
+						console.log(this.articles)
 					}
-					if (this.articles.length == this.maxArticles) {
+					if (this.maxArticles-- < 0) {
 						this.maxArticlesText = 'Maximum number of articles reached';
 					}
 				}
@@ -106,8 +108,9 @@
 		}
 
 		this.removeArticle = function(index) {
-			this.articles.splice(index, 1);
+			this.articleslist.splice(index, 1);
 			this.maxArticlesText = '';
+			this.maxArticles+=1
 		}
 
 
@@ -129,22 +132,42 @@
 
 			// If all required fields contain data, then submit
 			if (allDataPresent == required.length) {
-
+				// Conver list to string
+				this.articles_string = ''
+				for (var i in this.articleslist){
+					this.articles_string += this.articleslist[i];
+					if (i < this.articleslist.length-1) {
+						this.articles_string += ', ';
+					}  
+					console.log(this.articleslist[i])
+				}
+				this.tags_string = ''
+				for (var i in this.selectedTags){
+					this.tags_string+=this.selectedTags[i];
+					if (i < this.selectedTags.length-1) {
+						this.tags_string += ', ';
+					}
+				}
 				// Payload for POST request
 				var payload = {
 					'title': this.title,
 					'collaborators': 1,
 					'difficulty': this.difficulty,
 					'description': this.description,
-					'tags_list': this.selectedTags,
-					'articles': this.articles
+					'tags_list': this.tags_string,
+					'articles': this.articles_string,
 				};
-
 				// POST request to submit data
 				$http.post('/webapp/create_project/', payload).
 					then (function(response) {
 						$window.location.href = '/webapp/' + response.data;
 					});
+				// // $http({
+				// 	method	: 'POST',
+				// 	url 	: '/webapp/create_project/',
+				// 	data 	: payload,
+				// 	headers : {'Content-Type': 'applcation/json'}
+				// })
 			}
 		}
 	}]);

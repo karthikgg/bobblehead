@@ -49,7 +49,7 @@
       <label for="id_articles" class="col-md-2 control-label">Resources</label>
       <div class="col-md-4">
         <input type="text" class="form-control" id="id_articles" ng-keydown="formCtrl.addArticle($event)" ng-model="formCtrl.article">
-        <div ng-repeat="article in formCtrl.articles">
+        <div ng-repeat="article in formCtrl.articleslist">
           {% verbatim %}
             {{ article }} <a ng-click="formCtrl.removeArticle($index)" class="badge">x</a>
           {% endverbatim %}
