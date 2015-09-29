@@ -115,4 +115,27 @@ July 28, 2015
 they need to be pre-created)
 - Update user profiles to show projects the user has added, and the projects the user is working on or has worked on
 - Better UI
-- move all user interaction to the user_profile app (out of webapp)				
+- move all user interaction to the user_profile app (out of webapp)	
+
+ISSUES:
+
+Sept 29, 2015
+- Tags and resources with commas should be separated correctly (UI only, backend works correctly)
+- Editing projects have old view and incorrectly populated fields
+- submission from newly created project,
+also has old view
+- Submission page has one extra field beside submit, not sure for what it will be used
+- Submission: viewing the submission, list of members is missing
+- Submission view is old
+- Each submission should also display members of the project on the project page, right now it only shows submission links
+-  Submission edit is not working
+- After you hit delete and click on X icon, it should redirect back to the project page, right now it goes to the home page
+- Difficulty field is missing on the projects, both editing and viewing
+- Home page filter doesn't filter according to the difficult level, may be because we don't store the difficulty field in the database
+- collaborators min should be 1, right now it takes 0 and negative values
+- Project page should have both created on and last updated dates, and created by, updated by (if updated by another person?)
+- Edit project, only title editing seems to be working
+- After editing project, submissions are not shown
+- If a person X creates a project, can person Y delete the project? Some one might just delete every project (worst case)
+- If a person X creates a project, can the person Y edit it? 
+			
