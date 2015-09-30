@@ -9,14 +9,17 @@ PREREQUISITES:
 - Django 1.8
 - python-openid 2.2.5
 - SQLLite database (Django takes care of that, we want to change to POSTGRESQL)
-
-KEY NOTES:
-
-- Update config/db_settings.py with your database settings info
-- Update config/openid_settings.py with the realm/return URLS
-- Update config/django_secret.py with the django secret
+- If using PostgreSQL backend 
+	- install postgresql http://www.postgresql.org/download/
+	- install psycopg2 for talking to postgres thru python
+		http://initd.org/psycopg/docs/install.html
+	- create a database with a name 
+	- create a user for django to access database with
+	- open the file config/db_settings.py and fill in the details 
+	- some clues here : https://wiki.postgresql.org/wiki/First_steps
 
 - Set 'DEBUG' value in bobblehead/settings/base.py to 'True' if running locally.
+- Update config/django_secret.py with the django secret
 
 
 KEY FEATURES:
@@ -49,9 +52,8 @@ API ENDPOINTS:
 		- description (description of project)
 		- title (of the project)
 		- tags list
-		- user (who created it) id
+		- user (who created it) email and nickname
 		- posted on (date)
-		- model (webapp.project model)
 		- pk (primary key)
 
 
@@ -79,7 +81,86 @@ API ENDPOINTS:
 		    }
 		]
 
+
+ISSUES:
+
+Sept 29, 2015
+1. Tags and resources with commas should be separated correctly (UI only, backend works correctly) 
+	-> (FIXED) 
+
+2. Editing projects have old view and incorrectly populated fields 
+	-> (OPEN - Front end) Also, the form is considered invalid! Difficulty missing, and tags list missing. Probably because of the old template
+
+3. submission from newly created project, also has old view
+	-> (OPEN - Front end)
+
+4. Submission page has one extra field beside submit, not sure for what it will be used
+	-> (OPEN - Front end) this will be taken care of/removed with the new templates
+
+5. Submission: viewing the submission, list of members is missing
+	-> (OPEN - Front end) this will be taken care of with the new templates
+
+6. Submission view is old 
+	-> (OPEN - Front end) will be fixed with new front end updates
+
+7. Each submission should also display members of the project on the project page, right now it only shows submission links
+	-> (Future - Backend) ideall we should be able to see "teams" or "individual" attempts. This needs more work. V2
+
+8.  Submission edit is not working
+	-> (OPEN - Backend) lets not worry about submission edit or delete right now. for it to be useful, its implementation is going to be a bit more complicated. See in todos below.
+
+9. After you hit delete and click on X icon, it should redirect back to the project page, right now it goes to the home page
+	-> (FIXED - Not an issue?) Once the project is deleted it should redirect to home page, yes??
+
+10. Difficulty field is missing on the projects, both editing and viewing
+	-> (OPEN - Front end) Needs to be fixed on front end.
+
+11. Home page filter doesn't filter according to the difficult level, may be because we don't store the difficulty field in the database
+	-> (OPEN - Front end) not yet implemented. WIll be done soon on front end.
+
+12. collaborators min should be 1, right now it takes 0 and negative values
+	-> (Future - Front/back) Right now we ignore this field. 
+	-> (OPEN - Front end) field needs to be removed from edit projects
+
+13. Project page should have both created on and last updated dates, and created by, updated by (if updated by another person?)
+	-> Needs to be updated on front end. only the person who created can update/delete
+
+14. Edit project, only title editing seems to be working
+	-> (OPEN - Front end) Form is old. Needs the new template before this can work.
+
+15. After editing project, submissions are not shown
+	-> (FIXED) we weren't returning the submissions after an edit, only the project!
+
+16. If a person X creates a project, can person Y delete the project? Some one might just delete every project (worst case)
+	-> (FIXED) only person who created a project can delete/edit
+
+17. If a person X creates a project, can the person Y edit it? 
+	-> (FIXED) nope, only person who created can edit/delete. Don't want random people able to change project details.
+
+18. Project edit/delete. Right now the back end rejects attempts to make changes. 
+	The front end should first stop the user from trying as well.
+	-> (OPEN - Front end)
+
+19. The website is difficult to use! We need to include more tips or make the design more user friendly. 
+	-> (OPEN - Front end/Back end)
+
 TO DOs:
+
+Sept 28, 2015
+1. comments 
+	- add ability for users to comment
+
+2. tag users 
+	- in projects and in comments
+
+3. teams/individual submissions
+	- Instead of 'submissions' i would like to have 'currently in progress' as well
+	- If it is a team project in progress, I would like the viewers to see if there is an opening on the team. Who to contact? Etc. 
+	- Individual and teams with 'currently in progress' should be able to have discussions on the submission. Comments.
+
+4. ability to view code, a-la udacity project review. Comment and marking on the code like Udacity's project submissions 
+
+5. More details on submissions. 
 
 Aug 27, 2015
 1. create difficulty level parameter to Projects model
@@ -98,6 +179,8 @@ Aug 27, 2015
 6. redirection to desired url after logging in.
 	- still under work.
 
+7. show teams working on the project at the time
+
 Aug 12, 2015
 - Tags and Articles - comma separated tags and new text box per article (how to do this?)
 - If a user gets added to a project but doesn't exist in the database, add only the email address or create an inactive profile, or something?
@@ -115,27 +198,4 @@ July 28, 2015
 they need to be pre-created)
 - Update user profiles to show projects the user has added, and the projects the user is working on or has worked on
 - Better UI
-- move all user interaction to the user_profile app (out of webapp)	
-
-ISSUES:
-
-Sept 29, 2015
-- Tags and resources with commas should be separated correctly (UI only, backend works correctly)
-- Editing projects have old view and incorrectly populated fields
-- submission from newly created project,
-also has old view
-- Submission page has one extra field beside submit, not sure for what it will be used
-- Submission: viewing the submission, list of members is missing
-- Submission view is old
-- Each submission should also display members of the project on the project page, right now it only shows submission links
--  Submission edit is not working
-- After you hit delete and click on X icon, it should redirect back to the project page, right now it goes to the home page
-- Difficulty field is missing on the projects, both editing and viewing
-- Home page filter doesn't filter according to the difficult level, may be because we don't store the difficulty field in the database
-- collaborators min should be 1, right now it takes 0 and negative values
-- Project page should have both created on and last updated dates, and created by, updated by (if updated by another person?)
-- Edit project, only title editing seems to be working
-- After editing project, submissions are not shown
-- If a person X creates a project, can person Y delete the project? Some one might just delete every project (worst case)
-- If a person X creates a project, can the person Y edit it? 
-			
+- move all user interaction to the user_profile app (out of webapp)				

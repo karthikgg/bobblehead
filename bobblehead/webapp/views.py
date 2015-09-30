@@ -151,10 +151,6 @@ def create_project(request):
     GET: Return the form to create a project.
     POST: Create a new project and redirect to the project details
     """
-    if request.is_ajax():
-        print "it is ajax"
-    else:
-        print "this is not ajax"
     if request.method == "POST":
         print "raw data: %s" % request.body
         temp = json.loads(request.POST.dict().keys()[0])
@@ -255,15 +251,29 @@ def edit_project(request, project_id):
     else:
         if request.method == "POST":
             form = ProjectForm(request.POST, instance=project)
+            print form.fields
             # check whether it's valid:
             if form.is_valid():
-                m = form.save()
+                m = form.save(commit=False)
                 m.save()
-                return HttpResponseRedirect('/webapp/' + str(m.id))
+                print "This is the raw data: ", request.body
+                tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
+                article_object_list = _get_articles(form.cleaned_data['articles'])
+                print 'this is the tag_objects_list: ', tag_objects_list
+                for tag_object in tag_objects_list:
+                    m.tags.add(tag_object)
+                for article_object in article_object_list:
+                    m.articles.add(article_object)
+                m.save()
+                # return HttpResponseRedirect('/webapp/' + str(m.id))
+                return project_detail(request, m.id)
+            else:
+                print "form wasn't valid!"
+                # return render(request, 'webapp/error_edit.html', {'form': form})
         else:
             return render(request, 'webapp/edit_project.html',
                           {'project': project})
-    return render(request, 'webapp/details.html', {'project': project})
+    return project_detail(request, project_id)
 
 
 @is_authenticated()
