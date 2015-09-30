@@ -65,3 +65,4 @@ def show_submission(request, submission_id):
     except Submission.DoesNotExist:
         raise Http404("Submission object not found")
     return render(request, 'submissions/show_submission.html', {'submission': submission})
+

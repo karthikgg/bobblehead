@@ -49,7 +49,7 @@ class Project(models.Model):
     user = models.ForeignKey(UserProfile, default=None)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=5000)
-    collaborators = models.IntegerField(default=1)
+    collaborators = models.PositiveIntegerField(default=1)
     posted = models.DateField(db_index=True, auto_now_add=True)
     category = models.CharField(max_length=15,
                                 choices=CATEGORY_CHOICES,
