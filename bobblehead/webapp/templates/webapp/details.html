@@ -24,7 +24,6 @@
       Posted: {{project.posted}}
     </div>
   </div>
-
   <div class="row pad-top-20">
     <div class="col-md-6">
       <table class="table">
@@ -63,7 +62,7 @@
       </table>
     </div>
   </div>
-
+  {% if current_user == project.user.email %}
   <div class="row">
     <div class="col-md-12">
       <a href="{% url 'webapp:edit_project' project.id %}">
@@ -75,6 +74,7 @@
       </a>
     </div>
   </div>
+  {% endif %}
 </body>
 </html>
 
@@ -92,9 +92,9 @@
     <p>No submissions</p>
 {% endif %}
 
-<a href="{% url 'webapp:edit_project' project.id %}">Edit</a>
+<!-- <a href="{% url 'webapp:edit_project' project.id %}">Edit</a>
 <a href="{% url 'webapp:delete_project' project.id %}">Delete</a>
-
+ -->
 <p><a href="{% url 'submissions:new_submission' project.id %}">New Submission</a>
 </p>
 
