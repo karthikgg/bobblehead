@@ -89,7 +89,7 @@ Sept 29, 2015
 	-> (FIXED) 
 
 2. Editing projects have old view and incorrectly populated fields 
-	-> (OPEN - Front end) Also, the form is considered invalid! Difficulty missing, and tags list missing. Probably because of the old template
+	-> (FIXED) Also, the form is considered invalid! Difficulty missing, and tags list missing. Probably because of the old template
 
 3. submission from newly created project, also has old view
 	-> (OPEN - Front end)
@@ -116,17 +116,17 @@ Sept 29, 2015
 	-> (OPEN - Front end) Needs to be fixed on front end.
 
 11. Home page filter doesn't filter according to the difficult level, may be because we don't store the difficulty field in the database
-	-> (OPEN - Front end) not yet implemented. WIll be done soon on front end.
+	-> (FIXED)
 
 12. collaborators min should be 1, right now it takes 0 and negative values
 	-> (Future - Front/back) Right now we ignore this field. 
-	-> (OPEN - Front end) field needs to be removed from edit projects
+	-> (FIXED) field needs to be removed from edit projects
 
 13. Project page should have both created on and last updated dates, and created by, updated by (if updated by another person?)
-	-> Needs to be updated on front end. only the person who created can update/delete
+	-> (OPEN - Front end) Needs to be updated on front end. only the person who created can update/delete
 
 14. Edit project, only title editing seems to be working
-	-> (OPEN - Front end) Form is old. Needs the new template before this can work.
+	-> (FIXED) Form is old. Needs the new template before this can work.
 
 15. After editing project, submissions are not shown
 	-> (FIXED) we weren't returning the submissions after an edit, only the project!
