@@ -41,35 +41,51 @@
           <div class="bottom-border"> Difficulty </div>
           <div class="radio">
             <label>
-              <input type="radio" name="optionsRadios" ng-model="projects.difficulty" value="">
+              <input type="radio" name="optionsRadios" ng-model="difficulty" ng-change="projects.changeDifficulty()" value="">
               All
             </label>
           </div>
           <div class="radio">
             <label>
-              <input type="radio" name="optionsRadios" ng-model="projects.difficulty" value="easy">
+              <input type="radio" name="optionsRadios" ng-model="difficulty" ng-change="projects.changeDifficulty()" value="easy">
               Easy
             </label>
           </div>
           <div class="radio">
             <label>
-              <input type="radio" name="optionsRadios" ng-model="projects.difficulty" value="med">
+              <input type="radio" name="optionsRadios" ng-model="difficulty" ng-change="projects.changeDifficulty()" value="medium">
               Medium
             </label>
           </div>
           <div class="radio">
             <label>
-              <input type="radio" name="optionsRadios" ng-model="projects.difficulty" value="hard">
+              <input type="radio" name="optionsRadios" ng-model="difficulty" ng-change="projects.changeDifficulty()" value="hard">
               Hard
             </label>
           </div>
         </section>
+        <br>
+        <section>
+          <div class="bottom-border"> Tags </div>
+          <input type="text" ng-model="searchText" ng-keydown="checkKeyDown($event)" ng-change="search()" class="margin-top-10 width-100">
+          <ul class="list-group">
+            <li ng-repeat="suggestions in suggestions | limitTo: 3" class="list-group-item" ng-class="{active: selectedIndex === $index}">
+              {% verbatim %}
+                {{ suggestions }}
+              {% endverbatim %}
+            </li>
+          </ul>
+          <div ng-repeat="selectedTag in selectedTags" class="inline">
+            {% verbatim %}
+              {{ selectedTag }} <a ng-click="removeTag($index)" class="badge">x</a> &nbsp &nbsp
+            {% endverbatim %}
+          </div>
+        </section>
       </div>
-      {{ projects.difficulty }}
     </div>
 
     <div class="col-md-9 col-md-pull-3">
-      <div class="panel panel-default" ng-repeat="project in projects.data | filter:projects.difficulty"> <!-- | limitTo:10 -->
+      <div class="panel panel-default" ng-repeat="project in projects.data | filter:difficulty"> <!-- | limitTo:10 -->
         <div class="panel-body">
           {% verbatim %}
             <a href="/webapp/{{ project.pk }}/">{{ project.fields.title}}</a>
