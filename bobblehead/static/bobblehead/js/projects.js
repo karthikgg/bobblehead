@@ -6,7 +6,10 @@
 		$http.get('/webapp/projects_JSON/').then(function(response){
 			data.data = JSON.parse(JSON.parse(response.data));
 			sessionStorage.setItem('projects', JSON.stringify(data.data));
-      console.log(JSON.stringify(data.data, null, 2));
+      // console.log(JSON.stringify(data.data, null, 2));
     });
+
+		this.difficulty = '';
+
   }]);
 })();

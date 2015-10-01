@@ -250,8 +250,9 @@ def edit_project(request, project_id):
         return HttpResponseRedirect('/webapp/'+str(project_id))
     else:
         if request.method == "POST":
-            form = ProjectForm(request.POST, instance=project)
-            print form.fields
+            temp = json.loads(request.POST.dict().keys()[0])
+            form = ProjectForm(temp, instance=project)
+            # form = ProjectForm(request.POST, instance=project)
             # check whether it's valid:
             if form.is_valid():
                 m = form.save(commit=False)
@@ -266,7 +267,8 @@ def edit_project(request, project_id):
                     m.articles.add(article_object)
                 m.save()
                 # return HttpResponseRedirect('/webapp/' + str(m.id))
-                return project_detail(request, m.id)
+                # return project_detail(request, m.id)
+                return HttpResponse(str(m.id))
             else:
                 print "form wasn't valid!"
                 # return render(request, 'webapp/error_edit.html', {'form': form})

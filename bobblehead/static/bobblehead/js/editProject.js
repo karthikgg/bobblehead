@@ -160,8 +160,6 @@
           function toCSV(value, index) {
             if (index == 0) {
               temp = value;
-            } else if (index == array.length - 1 && array.length > 2) {
-              temp = temp + value;
             } else {
               temp = temp + ',' + value;
             }
