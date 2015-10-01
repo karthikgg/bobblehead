@@ -21,7 +21,7 @@ class UserProfile(models.Model):
                           ('DATA ANALYST', 'Data Analyst'),
                           ('IOS DEVELOPER', 'IOS Developer'))
     nanodegree = models.CharField(max_length=15,
-                                  choices=NANODEGREE_CHOICES,)
+                                  choices=NANODEGREE_CHOICES, default='Developer')
 
     def __unicode__(self):
         """ Return the username to better identify object. """

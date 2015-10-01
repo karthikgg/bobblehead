@@ -141,7 +141,7 @@ def project_detail(request, project_id):
         submissions_list = Submission.objects.filter(project=project)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
-    return render(request, 'webapp/details.html', {'project': project, 'submissions_list':submissions_list})
+    return render(request, 'webapp/details.html', {'project': project, 'submissions_list':submissions_list, 'current_user': request.session['email']})
 
 
 @is_authenticated()

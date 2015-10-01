@@ -144,6 +144,23 @@ Sept 29, 2015
 19. The website is difficult to use! We need to include more tips or make the design more user friendly. 
 	-> (OPEN - Front end/Back end)
 
+20. Edit/delete should be done using templating
+	-> (FIXED)
+
+21. Edit projects tags/articles are rewritten instead of appended.
+	-> (OPEN -backend)
+
+22. Substrings allowed for tags/articles 
+	-> (OPEN - Front end)
+
+23. When looking at a user's profile, the submissions links don't go anywhere
+	-> (FIXED)
+
+24. Submissions front end needs updating 
+	-> (OPEN - front end)
+
+
+
 TO DOs:
 
 Sept 28, 2015

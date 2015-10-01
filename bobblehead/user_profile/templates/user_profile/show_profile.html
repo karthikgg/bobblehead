@@ -18,20 +18,15 @@
     </div>
   </div>
 
+
   <div class="row">
     <div class="col-md-12">
       <h2>Hi, {{ user_profile.nickname }}</h2>
+      <p>Expertise: {{ user_profile.nanodegree }}</p>
       <a href="{% url 'user_profile:edit' %}">Edit profile</a>
     </div>
   </div>
 
-<!--
-  <div class="row">
-    <div class="col-md-12">
-      <p>{{ user_profile.nanodegree }}</p>
-    </div>
-  </div>
--->
 
   <div class="row">
     <div class="col-md-12">
@@ -41,8 +36,10 @@
           {% if projects %}
           <ul>
               {% for project in projects %}
-              <li><a href="/webapp/{{ project.pk }}/">{{project.title}}</a></li>
-              {% endfor %}
+              <!-- <li><a href="/webapp/{{ project.pk }}/">{{project.title}}</a></li>
+               -->
+               <li><a href="{% url 'webapp:detail' project.id %}">{{project.title}}</a></li>
+               {% endfor %}
           </ul>
           {% else %}
           No project challenges created yet
@@ -60,7 +57,7 @@
           {% if submissions_list %}
           <ul>
             {% for submission in submissions_list %}
-            <li><a href="#">{{submission.link}}</a></li>
+            <li><a href="{{submission.link}}">{{submission.link}}</a> | <a href="{% url 'submissions:show_submission' submission.id %}">Details </a></li>
             {% endfor %}
           </ul>
           {% else %}
