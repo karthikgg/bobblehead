@@ -154,7 +154,7 @@ Sept 29, 2015
 	-> (OPEN - Front end)
 
 23. When looking at a user's profile, the submissions links don't go anywhere
-	-> (OPEN - backend)
+	-> (FIXED)
 
 24. Submissions front end needs updating 
 	-> (OPEN - front end)
