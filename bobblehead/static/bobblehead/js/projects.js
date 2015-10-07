@@ -96,19 +96,38 @@
   }]);
 
 	app.filter('projectFilter', function() {
-		return function (items) {
+		return function (items, scope) {
 			var filtered = [];
-			items.forEach(filter);
-			function filter(item) {
-				if (item.fields.difficulty == $scope.difficulty) {
-					if ($scope.selectedTags) {
+			var checksum = [];
+			angular.forEach(items, function(item) {
 
+				itemTags = [];
+				item.fields.tags.forEach(lowerCase);
+				function lowerCase(value) {
+					if (typeof(value) == 'string') {
+						itemTags.push(value.toLowerCase());
 					} else {
-						filtered.push(item)
+						itemTags.push(value);
 					}
 				}
-			}
-			filtered.push(items[0].fields);
+
+				if (scope.selectedTags.length == 0) {
+					filtered.push(item);
+				} else {
+					scope.selectedTags.forEach(checkTags);
+					function checkTags(value) {
+						if (itemTags.indexOf(value) == -1) {
+							checksum.push(0);
+						} else {
+							checksum.push(1);
+						}
+					}
+					if (checksum.indexOf(0) == -1) {
+						filtered.push(item);
+					}
+				}
+				checksum = [];
+			});
 			return filtered;
 		}
 	});
