@@ -47,7 +47,7 @@
 			$scope.tags.forEach(suggest);
 			function suggest(value) {
 				var value = value.toLowerCase();
-				if (value.indexOf($scope.searchText) === 0 && $scope.searchText.length > 0 && $scope.suggestions.indexOf(value) === -1) {
+				if (value.indexOf(searchText) === 0 && searchText.length > 0 && $scope.suggestions.indexOf(value) === -1) {
 					$scope.suggestions.push(value);
 				}
 			}

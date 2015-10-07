@@ -59,7 +59,7 @@
 					$scope.selectedIndex--;
 				}
 			}
-			else if (event.keyCode === 13 || event.keyCode === 9) { //enter pressed
+			else if (event.keyCode === 9) { //Tab (9) pressed
 				if ($scope.searchText.length > 0) {
 					event.preventDefault();
 					$scope.addToSelectedTags($scope.selectedIndex);
@@ -67,6 +67,14 @@
 					$scope.search();
 				}
 			}
+      else if (event.keyCode === 13) { // Enter (13) pressed
+        if ($scope.searchText.length > 0) {
+					event.preventDefault();
+          $scope.pushToSelectedTags($scope.searchText); // Force add raw data, not suggestion
+          $scope.searchText = '';
+					$scope.search();
+        }
+      }
 		}
 
     $scope.addToSelectedTags = function(index) {
@@ -76,11 +84,15 @@
 				}
 			}
 			else {
+        console.log($scope.selectedTags.indexOf($scope.searchText));
 				if ($scope.selectedTags.indexOf($scope.searchText) == -1 && $scope.searchText !== '') {
 					$scope.selectedTags.push($scope.searchText);
 				}
 			}
 		}
+    $scope.pushToSelectedTags = function(tag) {
+      $scope.selectedTags.push(tag);
+    }
 
     $scope.removeTag = function(index) {
 			$scope.selectedTags.splice(index, 1);
