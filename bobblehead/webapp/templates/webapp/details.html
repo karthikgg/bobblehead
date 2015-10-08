@@ -20,8 +20,12 @@
   <div class="row">
     <div class="col-md-12">
       <h1>{{project.title}}</h1>
+       
       <h2>{{project.description}}</h2>
-      Posted: {{project.posted}}
+      Posted: {{project.posted}}<br/>
+      <a href="{% url 'user_profile:view' project.user.email %}">
+        Created by: {{project.user}}
+      </a>
     </div>
   </div>
   <div class="row pad-top-20">

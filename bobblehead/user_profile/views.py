@@ -130,6 +130,20 @@ def show(request, email):
     return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions_list})
 
 
+@is_authenticated()
+def view(request, email):
+    """ View user's profile, and the project's they have created. """
+    try:
+        user_profile = UserProfile.objects.get(email=email)
+        projects_list = Project.objects.filter(user=user_profile)
+        # Return all submissions that the user has made.
+        submissions_list = Submission.objects.filter(members__in=[user_profile])
+    except UserProfile.DoesNotExist:
+        print "User Does not exist!"
+        raise Http404("User doesnt exist")
+    return render(request, 'user_profile/view_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions_list})
+
+
 def login_udacity(request):
     """ Authenticate with Udacity using OpenID """
     if request.method == "POST":

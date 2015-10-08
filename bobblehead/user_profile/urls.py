@@ -11,5 +11,6 @@ urlpatterns = [
     url(r'^udacity_user/$', views.udacity_user, name='udacity_user'),
     url(r'^logout/$', views.logout_webapp, name='logout_webapp'),
     url(r'^show/(?P<email>[\w.-]+@[\w.-]+)/$', views.show, name='show'),
+    url(r'^view/(?P<email>[\w.-]+@[\w.-]+)/$', views.view, name='view'),
     url(r'^edit/$', views.edit, name='edit'),
 ]

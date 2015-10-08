@@ -138,10 +138,12 @@ def project_detail(request, project_id):
     """ Return the project details by project_id. """
     try:
         project = Project.objects.get(pk=project_id)
+        user_profile = UserProfile.objects.get(email=request.session['email'])
         submissions_list = Submission.objects.filter(project=project)
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
-    return render(request, 'webapp/details.html', {'project': project, 'submissions_list':submissions_list, 'current_user': request.session['email']})
+    context = {'project': project, 'submissions_list':submissions_list, 'current_user': request.session['email'], 'user_profile': user_profile}
+    return render(request, 'webapp/details.html', context)
 
 
 @is_authenticated()
