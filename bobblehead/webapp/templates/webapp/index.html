@@ -67,7 +67,7 @@
         <br>
         <section>
           <div class="bottom-border"> Tags </div>
-          <input type="text" ng-model="searchText" ng-keydown="checkKeyDown($event)" ng-change="search()" class="margin-top-10 width-100">
+          <input type="text" ng-model="searchText" ng-keydown="checkKeyDown($event)" ng-change="search()" class="margin-top-10 width-100" placeholder="e.g. python">
           <ul class="list-group">
             <li ng-repeat="suggestions in suggestions | limitTo: 3" class="list-group-item" ng-class="{active: selectedIndex === $index}">
               {% verbatim %}

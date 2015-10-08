@@ -77,7 +77,7 @@
 					$scope.selectedIndex--;
 				}
 			}
-			else if (event.keyCode === 13 || event.keyCode === 9) { //enter pressed
+			else if (event.keyCode === 9) { //Tab pressed
 				if ($scope.searchText.length > 0) {
 					event.preventDefault();
 					$scope.addToSelectedTags($scope.selectedIndex);
@@ -85,7 +85,15 @@
 					$scope.search();
 				}
 			}
-		}
+      else if (event.keyCode === 13) { //Enter pressed
+        if ($scope.searchText.length > 0) {
+          event.preventDefault();
+          $scope.pushToSelectedTags($scope.searchText); // Force add raw data, not suggestion
+          $scope.searchText = '';
+          $scope.search();
+        }
+      }
+    }
 
     $scope.addToSelectedTags = function(index) {
 			if ($scope.suggestions.length > 0) {
@@ -99,6 +107,9 @@
 				}
 			}
 		}
+    $scope.pushToSelectedTags = function(tag) {
+      $scope.selectedTags.push(tag);
+    }
 
     $scope.removeTag = function(index) {
 			$scope.selectedTags.splice(index, 1);
@@ -179,8 +190,14 @@
 
         $http.post('/webapp/' + $scope.projectKey + '/edit_project/', payload).
 					then (function(response) {
-						$window.location.href = '/webapp/' + response.data;
-				});
+            $http.get('/webapp/projects_JSON/').then(function(projectResponse){
+              sessionStorage.removeItem('projects');
+        			var data = JSON.parse(JSON.parse(projectResponse.data));
+        			sessionStorage.setItem('projects', JSON.stringify(data));
+              // console.log(JSON.stringify(data.data, null, 2));
+              $window.location.href = '/webapp/' + response.data;
+            });
+          });
       }
     }
 
