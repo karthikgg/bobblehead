@@ -255,6 +255,13 @@ def edit_project(request, project_id):
             # form = ProjectForm(request.POST, instance=project)
             # check whether it's valid:
             if form.is_valid():
+                #clear any previously stored tags to fix the bug 
+                #where we remove the tags and its not reflected
+                try:
+                    project.tags.clear()
+                    project.articles.clear()
+                except:
+                    print "No tags to clear"
                 m = form.save(commit=False)
                 m.save()
                 print "This is the raw data: ", request.body
