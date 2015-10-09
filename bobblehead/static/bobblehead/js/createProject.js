@@ -182,7 +182,7 @@
               // console.log(JSON.stringify(data.data, null, 2));
               $window.location.href = '/webapp/' + response.data;
             });
-          }
+          });
       }
     }
   }]);

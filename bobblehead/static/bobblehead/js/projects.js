@@ -3,10 +3,20 @@
 
   app.controller('ProjectsController', ['$scope', '$http', function($scope, $http) {
     var data = this;
+		$scope.tags = []
 		$http.get('/webapp/projects_JSON/').then(function(response){
 			data.data = JSON.parse(JSON.parse(response.data));
 			sessionStorage.setItem('projects', JSON.stringify(data.data));
-      // console.log(JSON.stringify(data.data, null, 2));
+
+	    data.data.forEach(getData);
+	    function getData(allData) {
+	      allData.fields.tags.forEach(getTags);
+	      function getTags(tag) {
+	        if ($scope.tags.indexOf(tag) == -1) {
+	          $scope.tags.push(tag);
+	        }
+	      }
+	    }
     });
 
 		// Persist difficulty filter
@@ -18,18 +28,6 @@
 		this.changeDifficulty = function() {
 			sessionStorage.setItem('difficulty', $scope.difficulty);
 		}
-
-		$scope.tags = []
-    var projectData = JSON.parse(sessionStorage.getItem('projects'));
-    projectData.forEach(getData);
-    function getData(allData) {
-      allData.fields.tags.forEach(getTags);
-      function getTags(tag) {
-        if ($scope.tags.indexOf(tag) == -1) {
-          $scope.tags.push(tag);
-        }
-      }
-    }
 
     $scope.searchText = '';
     $scope.suggestions = [];
