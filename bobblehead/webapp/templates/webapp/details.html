@@ -23,7 +23,7 @@
        
       <h2>{{project.description}}</h2>
       Posted: {{project.posted}}<br/>
-      <a href="{% url 'user_profile:view' project.user.email %}">
+      <a href="{% url 'user_profile:view' project.user.user_key %}">
         Created by: {{project.user}}
       </a>
     </div>

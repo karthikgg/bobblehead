@@ -1,7 +1,6 @@
 """ user_profiles - to display user's information """
 from django.db import models
-
-
+import uuid
 # class UserProfileManager(models.Manager):
 #     def get_by_natural_key(self, email, nickname):
 #         return self.get(email=email, nickname=nickname)
@@ -14,6 +13,7 @@ class UserProfile(models.Model):
     """ User information. """
     email = models.CharField(max_length=100, default="")
     nickname = models.CharField(max_length=50, default="")
+    user_key = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     udacity_key = models.CharField(max_length=10, default="")
     NANODEGREE_CHOICES = (('FULLSTACK', 'FullStack Developer'),
                           ('FRONTEND', 'Frontend Developer'),

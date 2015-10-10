@@ -110,38 +110,38 @@ def edit(request):
         if form.is_valid():
             m = form.save()
             m.save()
-            return HttpResponseRedirect('/user_profile/show/' + user_profile.email)
+            return HttpResponseRedirect('/user_profile/show/' + str(user_profile.user_key))
     else:
         return render(request, 'user_profile/edit_profile.html',
                       {'form': UserProfileForm(instance=user_profile), 'user_profile': user_profile, 'nanodegree_choices':UserProfile.NANODEGREE_CHOICES},)
 
 
 @is_authenticated()
-def show(request, email):
+def show(request, user_key):
     """ Show user's profile, and the project's they have created. """
     try:
-        user_profile = UserProfile.objects.get(email=email)
+        user_profile = UserProfile.objects.get(user_key=user_key)
         projects_list = Project.objects.filter(user=user_profile)
         # Return all submissions that the user has made.
-        submissions_list = Submission.objects.filter(members__in=[user_profile])
+        submissions = Submission.objects.filter(members__in=[user_profile])
     except UserProfile.DoesNotExist:
         print "User Does not exist!"
         raise Http404("User doesnt exist")
-    return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions_list})
+    return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions})
 
 
 @is_authenticated()
-def view(request, email):
+def view(request, user_key):
     """ View user's profile, and the project's they have created. """
     try:
-        user_profile = UserProfile.objects.get(email=email)
+        user_profile = UserProfile.objects.get(user_key=user_key)
         projects_list = Project.objects.filter(user=user_profile)
         # Return all submissions that the user has made.
-        submissions_list = Submission.objects.filter(members__in=[user_profile])
+        submissions = Submission.objects.filter(members__in=[user_profile])
     except UserProfile.DoesNotExist:
         print "User Does not exist!"
         raise Http404("User doesnt exist")
-    return render(request, 'user_profile/view_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions_list})
+    return render(request, 'user_profile/view_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions})
 
 
 def login_udacity(request):
