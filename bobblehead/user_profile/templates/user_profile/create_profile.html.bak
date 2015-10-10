@@ -1,0 +1,8 @@
+<form action="{% url 'user_profile:create_profile' %}" method="post">
+	{% csrf_token %}
+	{% for el in form_user %}
+		<p>{{el.label_tag}} {{el}}</p>
+	{% endfor %}
+	<p>{{ form_profile }}</p>
+	<input type="submit" value="Submit"/>
+</form>
