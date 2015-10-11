@@ -23,7 +23,9 @@
     <div class="col-md-12">
       <h2>Hi, {{ user_profile.nickname }}</h2>
       <p>Expertise: {{ user_profile.nanodegree }}</p>
+      {% if current_user == user_profile.email %}
       <a href="{% url 'user_profile:edit' %}">Edit profile</a>
+      {% endif %}
     </div>
   </div>
 

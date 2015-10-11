@@ -127,7 +127,13 @@ def show(request, user_key):
     except UserProfile.DoesNotExist:
         print "User Does not exist!"
         raise Http404("User doesnt exist")
-    return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions})
+    return render(request,
+                  'user_profile/show_profile.html',
+                  {'user_profile': user_profile,
+                   'projects': projects_list,
+                   'submissions_list': submissions,
+                   'current_user': request.session['email']}
+                  )
 
 
 @is_authenticated()
