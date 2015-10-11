@@ -173,14 +173,14 @@
 				};
 
         // POST request to submit data
-				$http.post('/webapp/create_project/', payload).
+				$http.post('/projects/create_project/', payload).
 					then (function(response) {
-            $http.get('/webapp/projects_JSON/').then(function(projectResponse){
+            $http.get('/projects/projects_JSON/').then(function(projectResponse){
               sessionStorage.removeItem('projects');
         			var data = JSON.parse(JSON.parse(projectResponse.data));
         			sessionStorage.setItem('projects', JSON.stringify(data));
               // console.log(JSON.stringify(data.data, null, 2));
-              $window.location.href = '/webapp/' + response.data;
+              $window.location.href = '/projects/' + response.data;
             });
           });
       }

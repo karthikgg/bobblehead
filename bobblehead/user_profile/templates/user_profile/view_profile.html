@@ -12,7 +12,7 @@
 <body class="container">
   <div class="row pad-10 margin-top-20 highlight">
     <div class="col-md-12">
-      <a href="{% url 'webapp:index' %}">
+      <a href="{% url 'projects:index' %}">
         <img src="{% static "images/arrow-back-white-1x.png" %}" alt="Return to main page"/>
         Back
       </a>
@@ -36,9 +36,9 @@
           {% if projects %}
           <ul>
               {% for project in projects %}
-              <!-- <li><a href="/webapp/{{ project.pk }}/">{{project.title}}</a></li>
+              <!-- <li><a href="/projects/{{ project.pk }}/">{{project.title}}</a></li>
                -->
-               <li><a href="{% url 'webapp:detail' project.id %}">{{project.title}}</a></li>
+               <li><a href="{% url 'projects:detail' project.id %}">{{project.title}}</a></li>
                {% endfor %}
           </ul>
           {% else %}

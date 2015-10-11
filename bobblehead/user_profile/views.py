@@ -2,12 +2,12 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import Http404
 # from django.contrib.auth.forms import UserCreationForm
-# from webapp.models import Project
+# from projects.models import Project
 from django.contrib.auth import logout
 from .forms import UserProfileForm
 from .models import UserProfile
 
-from webapp.models import Project, CATEGORY_CHOICES
+from projects.models import Project, CATEGORY_CHOICES
 from submissions.models import Submission
 
 # OpenID imports
@@ -28,12 +28,12 @@ def is_authenticated():
             if 'udacity_key' in request.session:
                 return func(request, *args, **kwargs)
             else:
-                return render(request, 'user_profile/login_webapp.html')
+                return render(request, 'user_profile/login_projects.html')
         return wrapper
     return decorator
 
 
-def logout_webapp(request):
+def logout_projects(request):
     """ Log the user out """
     if request.user and 'udacity_key' not in request.session:
         # If the user was authenticated locally
@@ -46,29 +46,29 @@ def logout_webapp(request):
             del request.session['name']
         except KeyError:
             pass
-    return HttpResponseRedirect('/webapp')
+    return HttpResponseRedirect('/projects')
 
 
-def login_webapp(request):
+def login_projects(request):
     """ View to log in user. """
     # print "The session is: ", request.session
     # username = request.POST['username']
     # password = request.POST['password']
     # print username, password
     # user = authenticate(username=username, password=password)
-    print "in login webapp: ", request.session
+    print "in login projects: ", request.session
     if 'email' in request.session:
         print "User: ", request.session['email']
         # if user.is_active:
         #     login(request, user)
         #     request.session['email'] = user.email
-        return HttpResponseRedirect('/webapp/')
+        return HttpResponseRedirect('/projects/')
         # else:
         #     print("user logged in is not active")
     else:
         print("no user!")
-        return render(request, 'user_profile/login_webapp.html')
-    return render(request, 'webapp/index.html')
+        return render(request, 'user_profile/login_projects.html')
+    return render(request, 'projects/index.html')
 
 
 # def create_profile(request):
@@ -86,7 +86,7 @@ def login_webapp(request):
 #             profile.email = user.email
 #             profile.udacity_key = ""
 #             profile.save()
-#             return HttpResponseRedirect('/webapp/')
+#             return HttpResponseRedirect('/projects/')
 #         else:
 #             print "form was invalid!"
 #     else:
@@ -127,7 +127,13 @@ def show(request, user_key):
     except UserProfile.DoesNotExist:
         print "User Does not exist!"
         raise Http404("User doesnt exist")
-    return render(request, 'user_profile/show_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions})
+    return render(request,
+                  'user_profile/show_profile.html',
+                  {'user_profile': user_profile,
+                   'projects': projects_list,
+                   'submissions_list': submissions,
+                   'current_user': request.session['email']}
+                  )
 
 
 @is_authenticated()
@@ -210,4 +216,4 @@ def udacity_user(request):
         # user_profile.user(email=email=request.session['email'])
     else:
         print "Nope"
-    return HttpResponseRedirect('/webapp/')
+    return HttpResponseRedirect('/projects/')

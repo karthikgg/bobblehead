@@ -188,14 +188,14 @@
 					'articles': articleString
 				};
 
-        $http.post('/webapp/' + $scope.projectKey + '/edit_project/', payload).
+        $http.post('/projects/' + $scope.projectKey + '/edit_project/', payload).
 					then (function(response) {
-            $http.get('/webapp/projects_JSON/').then(function(projectResponse){
+            $http.get('/projects/projects_JSON/').then(function(projectResponse){
               sessionStorage.removeItem('projects');
         			var data = JSON.parse(JSON.parse(projectResponse.data));
         			sessionStorage.setItem('projects', JSON.stringify(data));
               // console.log(JSON.stringify(data.data, null, 2));
-              $window.location.href = '/webapp/' + response.data;
+              $window.location.href = '/projects/' + response.data;
             });
           });
       }

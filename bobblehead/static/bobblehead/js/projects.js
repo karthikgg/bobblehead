@@ -4,7 +4,7 @@
   app.controller('ProjectsController', ['$scope', '$http', function($scope, $http) {
     var data = this;
 		$scope.tags = []
-		$http.get('/webapp/projects_JSON/').then(function(response){
+		$http.get('/projects/projects_JSON/').then(function(response){
 			data.data = JSON.parse(JSON.parse(response.data));
 			sessionStorage.setItem('projects', JSON.stringify(data.data));
 

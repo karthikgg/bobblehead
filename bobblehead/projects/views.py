@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from webapp.models import Project, Tag, Articles
+from projects.models import Project, Tag, Articles
 from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.core import serializers
@@ -120,7 +120,7 @@ def index(request):
     user_profile = UserProfile.objects.get(email=request.session['email'])
     latest_project_list = Project.objects.order_by('posted')[:10]
     context = {'latest_project_list': latest_project_list, 'user_profile': user_profile}
-    return render(request, 'webapp/index.html', context)
+    return render(request, 'projects/index.html', context)
 
 
 def request_meta(request):
@@ -143,7 +143,7 @@ def project_detail(request, project_id):
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     context = {'project': project, 'submissions_list':submissions_list, 'current_user': request.session['email'], 'user_profile': user_profile}
-    return render(request, 'webapp/details.html', context)
+    return render(request, 'projects/details.html', context)
 
 
 @is_authenticated()
@@ -181,14 +181,14 @@ def create_project(request):
                 prj_obj.articles.add(article_object)
             prj_obj.save()
             return HttpResponse(str(prj_obj.id))
-            # return HttpResponseRedirect('/webapp/' + str(prj_obj.id))
+            # return HttpResponseRedirect('/projects/' + str(prj_obj.id))
         else:
             print "Form is invalid"
             print form.errors.as_data()
     else:
         # Remove when front end updated.
         form = ProjectForm()
-    return render(request, 'webapp/create_project.html', {'form': form})
+    return render(request, 'projects/create_project.html', {'form': form})
 
 
 def _get_tags(tag_string):
@@ -249,7 +249,7 @@ def edit_project(request, project_id):
     print "The current user is: ", request.session['email']
 
     if project.user.email != request.session['email']:
-        return HttpResponseRedirect('/webapp/'+str(project_id))
+        return HttpResponseRedirect('/projects/'+str(project_id))
     else:
         if request.method == "POST":
             temp = json.loads(request.POST.dict().keys()[0])
@@ -275,14 +275,14 @@ def edit_project(request, project_id):
                 for article_object in article_object_list:
                     m.articles.add(article_object)
                 m.save()
-                # return HttpResponseRedirect('/webapp/' + str(m.id))
+                # return HttpResponseRedirect('/projects/' + str(m.id))
                 # return project_detail(request, m.id)
                 return HttpResponse(str(m.id))
             else:
                 print "form wasn't valid!"
-                # return render(request, 'webapp/error_edit.html', {'form': form})
+                # return render(request, 'projects/error_edit.html', {'form': form})
         else:
-            return render(request, 'webapp/edit_project.html',
+            return render(request, 'projects/edit_project.html',
                           {'project': project})
     return project_detail(request, project_id)
 
@@ -302,13 +302,13 @@ def delete_project(request, project_id):
     print "The project's creator is: ", project.user.email
     print "The current user is: ", request.session['email']
     if project.user.email != request.session['email']:
-        return HttpResponseRedirect('/webapp/' + str(project_id))
+        return HttpResponseRedirect('/projects/' + str(project_id))
     else:
         if request.method == "POST":
             if project:
                 project.delete()
-                return HttpResponseRedirect('/webapp/')
+                return HttpResponseRedirect('/projects/')
             else:
-                return render(request, 'webapp/delete_project.html',
+                return render(request, 'projects/delete_project.html',
                               {'project': project})
-    return render(request, 'webapp/delete_project.html', {'project': project})
+    return render(request, 'projects/delete_project.html', {'project': project})

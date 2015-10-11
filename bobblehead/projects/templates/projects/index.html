@@ -19,14 +19,14 @@
     <div class="col-md-12">
       Welcome, <a href="{% url 'user_profile:show' user_profile.user_key %}">{{ user_profile.nickname }}</a>
       <div class="pull-right">
-        <b><a href="{% url 'user_profile:logout_webapp' %}">Log out</a></b>
+        <b><a href="{% url 'user_profile:logout_projects' %}">Log out</a></b>
       </div>
     </div>
   </div>
 
   <div class="row pad-10 highlight">
     <div class="col-md-12">
-      <a href="{% url 'webapp:create_project' %}">
+      <a href="{% url 'projects:create_project' %}">
         <img src="{% static "images/add-circle-white-1x.png" %}" alt="Add new project"/>
         &nbspAdd new project
       </a>
@@ -88,7 +88,7 @@
       <div class="panel panel-default" ng-repeat="project in projects.data | filter:difficulty | projectFilter:this"> <!-- | limitTo:10 -->
         <div class="panel-body">
           {% verbatim %}
-            <a href="/webapp/{{ project.pk }}/">{{ project.fields.title}}</a>
+            <a href="/projects/{{ project.pk }}/">{{ project.fields.title}}</a>
           {% endverbatim %}
         </div>
       </div>

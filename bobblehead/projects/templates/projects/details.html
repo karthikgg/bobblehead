@@ -11,7 +11,7 @@
 <body class="container">
   <div class="row pad-10 margin-top-20 highlight">
     <div class="col-md-12">
-      <a href="{% url 'webapp:index' %}">
+      <a href="{% url 'projects:index' %}">
         <img src="{% static "images/arrow-back-white-1x.png" %}" alt="Return to main page"/>
         Back
       </a>
@@ -23,9 +23,7 @@
        
       <h2>{{project.description}}</h2>
       Posted: {{project.posted}}<br/>
-      <a href="{% url 'user_profile:view' project.user.user_key %}">
-        Created by: {{project.user}}
-      </a>
+      Created by: <a href="{% url 'user_profile:show' project.user.user_key %}">{{project.user}}</a>
     </div>
   </div>
   <div class="row pad-top-20">
@@ -69,11 +67,11 @@
   {% if current_user == project.user.email %}
   <div class="row">
     <div class="col-md-12">
-      <a href="{% url 'webapp:edit_project' project.id %}">
+      <a href="{% url 'projects:edit_project' project.id %}">
         <img src="{% static "images/edit-black-2x.png" %}" alt="Edit"/>
       </a>
       &nbsp
-      <a href="{% url 'webapp:delete_project' project.id %}">
+      <a href="{% url 'projects:delete_project' project.id %}">
         <img src="{% static "images/delete-black-2x.png" %}" alt="Delete"/>
       </a>
     </div>
@@ -96,10 +94,10 @@
     <p>No submissions</p>
 {% endif %}
 
-<!-- <a href="{% url 'webapp:edit_project' project.id %}">Edit</a>
-<a href="{% url 'webapp:delete_project' project.id %}">Delete</a>
+<!-- <a href="{% url 'projects:edit_project' project.id %}">Edit</a>
+<a href="{% url 'projects:delete_project' project.id %}">Delete</a>
  -->
 <p><a href="{% url 'submissions:new_submission' project.id %}">New Submission</a>
 </p>
 
-<p><a href="{% url 'webapp:index' %}">Home</a></p>
+<p><a href="{% url 'projects:index' %}">Home</a></p>

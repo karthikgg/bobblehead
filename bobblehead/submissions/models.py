@@ -1,5 +1,5 @@
 from django.db import models
-from webapp.models import Project
+from projects.models import Project
 from user_profile.models import UserProfile
 
 
@@ -22,7 +22,7 @@ class Submission(models.Model):
 
 
 """ How to add members
-from webapp.models import Project
+from projects.models import Project
 from user_profile.models import UserProfile
 from submissions.models import Submission
 

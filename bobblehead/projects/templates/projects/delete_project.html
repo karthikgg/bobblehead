@@ -17,11 +17,11 @@
   </div>
   <div class="row pad-top-20">
     <div class="col-md-12 flex center">
-      <form action="{% url 'webapp:delete_project' project.id%}" method="post">
+      <form action="{% url 'projects:delete_project' project.id%}" method="post">
           {% csrf_token %}
           <input type="image" src="{% static "images/check-black-2x.png" %}" alt="Confirm" />
       </form>
-      <a href="{% url 'webapp:detail' project.id%}">
+      <a href="{% url 'projects:detail' project.id%}">
         <img src="{% static "images/cancel-black-2x.png" %}" alt="Cancel"/>
       </a>
     </div>

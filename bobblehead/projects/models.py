@@ -1,4 +1,4 @@
-""" Models for webapp - project, tags. """
+""" Models for projects - project, tags. """
 
 from django.db import models
 from django.core.urlresolvers import reverse

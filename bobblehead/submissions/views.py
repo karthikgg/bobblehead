@@ -8,7 +8,7 @@ from .models import Submission
 from .forms import SubmissionForm
 
 # External App models, views
-from webapp.models import Project
+from projects.models import Project
 from user_profile.models import UserProfile
 from user_profile.views import is_authenticated
 
@@ -47,7 +47,7 @@ def new_submission(request, project_id):
             submission.project = project
             submission.save()
             _add_members_to_submission(request, member_emails, submission)
-            return HttpResponseRedirect('/webapp/' + str(project_id))
+            return HttpResponseRedirect('/projects/' + str(project_id))
         else:
             raise Http404('Form is not valid')
     else:
