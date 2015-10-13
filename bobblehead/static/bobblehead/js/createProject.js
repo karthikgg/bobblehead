@@ -164,12 +164,12 @@
 
 				// Payload for POST request
 				var payload = {
-					'title': $scope.title,
+					'title': encode($scope.title),
 					'collaborators': 1,
 					'difficulty': $scope.difficulty,
-					'description': $scope.description,
-					'tags_list': tagString,
-					'articles': articleString
+					'description': encode($scope.description),
+					'tags_list': encode(tagString),
+					'articles': encode(articleString)
 				};
 
         // POST request to submit data
