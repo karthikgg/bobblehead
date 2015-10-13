@@ -1,4 +1,51 @@
-<!-- new submission html -->
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Udacity Student Projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+  {% load staticfiles %}
+  <link rel="stylesheet" type="text/css" href="{% static "css/bobblehead.css" %}"/>
+</head>
+
+<body class="container">
+	<div class="row pad-10 margin-top-20 highlight">
+		<div class="col-md-12">
+			<a href="{% url 'projects:detail' project_id %}">
+				<img src="{% static "images/arrow-back-white-1x.png" %}" alt="Back to Project"/>
+				Cancel
+			</a>
+		</div>
+	</div>
+
+	<form action="{% url 'submissions:new_submission' project_id %}" method="post" class="form-horizontal" autocomplete="off">
+		{% csrf_token %}
+		<div class="form-group pad-top-20">
+			<label for="id_link" class="col-md-2 control-label">Link</label>
+      <div class="col-md-4">
+        <input type="url" id="id_link" name="link" class="form-control" required>
+      </div>
+		</div>
+
+		<div class="form-group">
+      <label for="id_description" class="col-md-2 control-label">Description</label>
+      <div class="col-md-4">
+        <textarea class="form-control" id="id_description" name="description" rows="3" required></textarea>
+      </div>
+    </div>
+
+		<div class="form-group">
+			<div class="col-md-offset-2 col-md-4">
+				<button type="submit" class="btn btn-default">Submit</button>
+			</div>
+		</div>
+	</form>
+
+</body>
+</html>
+
+<!-- new submission html
 <form action="{% url 'submissions:new_submission' project_id %}" method="post">
 	{% csrf_token %}
 	{% for entry in form %}
@@ -6,3 +53,4 @@
 	{% endfor %}
 	<input type="submit" value="Submit"/>
 </form>
+-->

@@ -1,14 +1,58 @@
-<h1>{{submission.project.title}}</h1>
+<html>
+<head>
+  <title>Udacity Student Projects</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+  {% load staticfiles %}
+  <link rel="stylesheet" type="text/css" href="{% static "css/bobblehead.css" %}"/>
+</head>
 
-<h3>Submission link</h3>
-{{submission.link}}
+<body class="container">
+	<div class="row pad-10 margin-top-20 highlight">
+		<div class="col-md-12">
+      <a href="/projects/{{submission.project.id}}">
+				<img src="{% static "images/arrow-back-white-1x.png" %}" alt="Back to Project"/>
+				Back
+			</a>
+		</div>
+	</div>
 
-<h3>Description</h3>
-{{submission.description}}
+  <div class="row">
+    <div class="col-md-12">
+      <h2>{{submission.project.title}}</h2>
+    </div>
+  </div>
 
-<h3>List of members</h3>
-{% for member in submission.members.all %}
-<p>User Name: {{member.email}}</p>
-{% endfor %}
+  <div class="row pad-top-20">
+    <div class="col-md-2 text-right">
+      <b>Submission Link</b>
+    </div>
+    <div class="col-md-10">
+      <a href="{{ submission.link }}">{{ submission.link }}</a>
+    </div>
+  </div>
 
-<a href="/projects/{{submission.project.id}}">Return</a>
+  <div class="row pad-top-20">
+    <div class="col-md-2 text-right">
+      <b>Description</b>
+    </div>
+    <div class="col-md-10">
+      {{ submission.description }}
+    </div>
+  </div>
+
+  <div class="row pad-top-20">
+    <div class="col-md-2 text-right">
+      <b>Submitted By</b>
+    </div>
+    <div class="col-md-10">
+      {% for member in submission.members.all %}
+        <a href="{% url 'user_profile:view' member.user_key %}">
+          {{ member.nickname }}
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+</body>
+</html>
