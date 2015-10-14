@@ -27,7 +27,7 @@ SECRET_KEY = django_secret.DJANGO_SECRET
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+LOCAL_TEST = False
 # If DEBUG is off, ALLOWED_HOSTS must have values
 ALLOWED_HOSTS = []
 

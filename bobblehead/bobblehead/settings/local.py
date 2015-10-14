@@ -17,17 +17,18 @@ import os
 # Since we added a level (settings folder), we add a new level of os.path.dirname
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from config import 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = django_secret.DJANGO_SECRET
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+from django.conf import DEBUG, LOCAL_TEST
 # If DEBUG is off, ALLOWED_HOSTS must have values
-ALLOWED_HOSTS = []
+if not DEBUG and LOCAL_TEST:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = []
 
 
 # Application definition

@@ -16,7 +16,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 from django.conf import settings
 
-if not settings.DEBUG:
+if not settings.DEBUG and not settings.LOCAL_TEST:
     from config import django_secret
     # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
     import os
