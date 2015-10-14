@@ -104,7 +104,8 @@
       <ul class="list-unstyled">
        {% for submission in submissions_list %}
        <li>
-         <a href="{% url 'submissions:show_submission' submission.id %}">{{submission.link}}</a>
+         <a href="{% url 'submissions:show_submission' submission.id %}">{{submission.link}}, by - {% for member in submission.members.all %} {{ member.nickname }} | {% endfor %} </a>
+        
        </li>
        {% endfor %}
      </ul>
