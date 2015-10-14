@@ -72,7 +72,6 @@ def _get_projects(filters):
     projects = Project.objects.all()
     # We need a dictonary to pass to Django's filter function
     query_dict = {}
-    print "The filters is: ", filters
     # Order the projects based on the ordering queries
     for orders in orders_query:
         projects = projects.order_by(orders['property'])
@@ -104,11 +103,8 @@ def query_projects(request):
         Filters will be JSON object and passed through request """
     try:
         filters = request.data
-        print "WE got data!"
     except AttributeError:
         filters = FILTER
-
-    print "Reached query_projects fn, filters are: ", filters
     projects = _get_projects(filters)
     projects_as_json = serializers.serialize('json', projects)
     return HttpResponse(json.dumps(projects_as_json), content_type='json')
@@ -153,17 +149,12 @@ def create_project(request):
     GET: Return the form to create a project.
     POST: Create a new project and redirect to the project details
     """
-    print "In create_project"
     if request.method == "POST":
-        print "raw data: %s" % request.body
-        print "Request post dict keys: ", request.POST.dict().keys()
         temp = json.loads(request.body)
-        print "Here is the temp: ", temp
         form = ProjectForm(temp)
 
         # check whether it's valid:
         if form.is_valid():
-            print 'form is valid'
             prj_obj = form.save(commit=False)
             # fint the user profile object based on the email in session
             user_profile = UserProfile.objects.get(email=request.session['email'])
@@ -171,14 +162,9 @@ def create_project(request):
             # Save the project object - project needs to exist before
             # manytomany field is accessed.
             prj_obj.save()
-            print "The description is: ", prj_obj.description
             # get the list of tag objects to add to project
-            print "The tags list raw is: ", form.cleaned_data['tags_list']
-            print "The form title raw is: ", form.cleaned_data['title']
-            print "The title type is: ", type(form.cleaned_data['title'])
             tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
             article_object_list = _get_articles(form.cleaned_data['articles'])
-            print 'this is the tag_objects_list: ', tag_objects_list
             for tag_object in tag_objects_list:
                 prj_obj.tags.add(tag_object)
             for article_object in article_object_list:
@@ -187,11 +173,9 @@ def create_project(request):
             return HttpResponse(str(prj_obj.id))
             # return HttpResponseRedirect('/projects/' + str(prj_obj.id))
         else:
-            print "Form is invalid"
             print form.errors.as_data()
     else:
         # Remove when front end updated.
-        print "Wasn't a POST"
         form = ProjectForm()
     return render(request, 'projects/create_project.html', {'form': form})
 
@@ -203,7 +187,6 @@ def _get_tags(tag_string):
     """
     tag_objects_list = []
     # remove all whitespaces
-    print "the tag string is of type ", type(tag_string)
     tag_string_cleaned = tag_string.replace(" ", "")
     tokens = tag_string_cleaned.split(',')
     for tok in tokens:
@@ -223,7 +206,6 @@ def _get_articles(article_string):
         Return a list of article objects to add to the project
     """
     article_objects_list = []
-    print "the article string is of type ", type(article_string)
     # remove all whitespaces
     article_string_cleaned = article_string.replace(" ", "")
     tokens = article_string_cleaned.split(',')
@@ -250,9 +232,7 @@ def edit_project(request, project_id):
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     # check whether the user is the one who created this project
-    print "The project's creator is: ", project.user.email
-    print "The current user is: ", request.session['email']
-
+    
     if project.user.email != request.session['email']:
         return HttpResponseRedirect('/projects/'+str(project_id))
     else:
@@ -268,13 +248,11 @@ def edit_project(request, project_id):
                     project.tags.clear()
                     project.articles.clear()
                 except:
-                    print "No tags to clear"
+                    pass
                 m = form.save(commit=False)
                 m.save()
-                print "This is the raw data: ", request.body
                 tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
                 article_object_list = _get_articles(form.cleaned_data['articles'])
-                print 'this is the tag_objects_list: ', tag_objects_list
                 for tag_object in tag_objects_list:
                     m.tags.add(tag_object)
                 for article_object in article_object_list:
@@ -284,7 +262,8 @@ def edit_project(request, project_id):
                 # return project_detail(request, m.id)
                 return HttpResponse(str(m.id))
             else:
-                print "form wasn't valid!"
+                return render(request, 'projects/edit_project.html',
+                              {'project': project})
                 # return render(request, 'projects/error_edit.html', {'form': form})
         else:
             return render(request, 'projects/edit_project.html',
@@ -304,8 +283,6 @@ def delete_project(request, project_id):
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     # check whether the user is the one who created this project
-    print "The project's creator is: ", project.user.email
-    print "The current user is: ", request.session['email']
     if project.user.email != request.session['email']:
         return HttpResponseRedirect('/projects/' + str(project_id))
     else:

@@ -47,7 +47,7 @@
     </div>
     <div class="col-md-10">
       {% for member in submission.members.all %}
-        <a href="{% url 'user_profile:view' member.user_key %}">
+        <a href="{% url 'user_profile:show' member.user_key %}">
           {{ member.nickname }}
         </a>
       {% endfor %}

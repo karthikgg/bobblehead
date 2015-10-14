@@ -22,12 +22,10 @@ def _add_members_to_submission(request, member_emails, submission):
     """
     for email in member_emails:
         try:
-            print "Here is the email: ", email
             member_profile = UserProfile.objects.get(email=email.strip())
-            print member_profile.nickname
             submission.members.add(member_profile)
         except UserProfile.DoesNotExist:
-            print "email doesn't exist - for future create a record"
+            pass
     submission.save()
 
 
@@ -37,12 +35,10 @@ def new_submission(request, project_id):
     project = Project.objects.get(pk=project_id)
     if request.method == "POST":
         submission_form = SubmissionForm(request.POST)
-        print "The request post is: ", request.POST
         if submission_form.is_valid():
             # print "The users line is: ", submission_form['members_list']
             member_emails = [request.session['email']]
             member_emails.extend(submission_form.cleaned_data['members_list'].split(','))
-            print "The member emails are: ", member_emails
             submission = submission_form.save(commit=False)
             submission.project = project
             submission.save()
@@ -65,4 +61,3 @@ def show_submission(request, submission_id):
     except Submission.DoesNotExist:
         raise Http404("Submission object not found")
     return render(request, 'submissions/show_submission.html', {'submission': submission})
-

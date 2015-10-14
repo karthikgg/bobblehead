@@ -23,8 +23,6 @@ def is_authenticated():
     def decorator(func):
         @wraps(func)
         def wrapper(request, *args, **kwargs):
-            # print "There are the arguments: ", kwargs
-            # request = kwargs['request']
             if 'udacity_key' in request.session:
                 return func(request, *args, **kwargs)
             else:
@@ -51,50 +49,11 @@ def logout_projects(request):
 
 def login_projects(request):
     """ View to log in user. """
-    # print "The session is: ", request.session
-    # username = request.POST['username']
-    # password = request.POST['password']
-    # print username, password
-    # user = authenticate(username=username, password=password)
-    print "in login projects: ", request.session
     if 'email' in request.session:
-        print "User: ", request.session['email']
-        # if user.is_active:
-        #     login(request, user)
-        #     request.session['email'] = user.email
         return HttpResponseRedirect('/projects/')
-        # else:
-        #     print("user logged in is not active")
     else:
-        print("no user!")
         return render(request, 'user_profile/login_projects.html')
     return render(request, 'projects/index.html')
-
-
-# def create_profile(request):
-#     """ Create profile if not exists. """
-#     if request.method == "POST":
-#         form_user = UserForm(request.POST)
-#         form_profile = UserProfileForm(request.POST)
-#         if form_user.is_valid() and form_profile.is_valid():
-#             # Save the user information first
-#             user = form_user.save()
-#             # m.set_password(m.password)
-#             # Save the profile related information later, and add user
-#             profile = form_profile.save(commit=False)
-#             profile.user = user
-#             profile.email = user.email
-#             profile.udacity_key = ""
-#             profile.save()
-#             return HttpResponseRedirect('/projects/')
-#         else:
-#             print "form was invalid!"
-#     else:
-#         form_user = UserForm()
-#         form_profile = UserProfileForm()
-#     # return HttpResponse("Create User Profile Here")
-#     return render(request, 'user_profile/create_profile.html',
-#                   {'form_user': form_user, 'form_profile': form_profile})
 
 
 @is_authenticated()
@@ -125,7 +84,6 @@ def show(request, user_key):
         # Return all submissions that the user has made.
         submissions = Submission.objects.filter(members__in=[user_profile])
     except UserProfile.DoesNotExist:
-        print "User Does not exist!"
         raise Http404("User doesnt exist")
     return render(request,
                   'user_profile/show_profile.html',
@@ -145,7 +103,6 @@ def view(request, user_key):
         # Return all submissions that the user has made.
         submissions = Submission.objects.filter(members__in=[user_profile])
     except UserProfile.DoesNotExist:
-        print "User Does not exist!"
         raise Http404("User doesnt exist")
     return render(request, 'user_profile/view_profile.html', {'user_profile': user_profile, 'projects': projects_list, 'submissions_list': submissions})
 
@@ -204,16 +161,11 @@ def udacity_user(request):
 
         print "the session object is: ", request.session
         if not UserProfile.objects.filter(udacity_key=request.session['udacity_key']).exists():
-            # base_user = User(username=request.session['email'],
-            #                  email=request.session['email'])
-            # base_user.backend = "udacity"
-            # base_user.save()
             user_profile = UserProfile(email=request.session['email'],
                                        nickname=request.session['name'],
                                        udacity_key=request.session['udacity_key'])
 
             user_profile.save()
-        # user_profile.user(email=email=request.session['email'])
     else:
         print "Nope"
     return HttpResponseRedirect('/projects/')

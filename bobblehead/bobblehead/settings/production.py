@@ -16,15 +16,12 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 from django.conf import settings
 
-print "Settings debug is: ", settings.DEBUG
-if not settings.DEBUG:
+if not settings.DEBUG and not settings.LOCAL_TEST:
     from config import django_secret
-    print "in production!"
     # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
     import os
     # Since we added a level (settings folder), we add a new level of os.path.dirname
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 
     # Quick-start development settings - unsuitable for production
     # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -35,8 +32,7 @@ if not settings.DEBUG:
     DEBUG = False
 
     # If DEBUG is off, ALLOWED_HOSTS must have values
-    ALLOWED_HOSTS = ['localhost']
-
+    ALLOWED_HOSTS = ['http://www.nanoprojects.org', 'http://nanoprojects.org']
 
     # Application definition
 
@@ -88,36 +84,36 @@ if not settings.DEBUG:
     WSGI_APPLICATION = 'bobblehead.wsgi.application'
 
     LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
+        'version': 1,
+        'disable_existing_loggers': False,
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse'
+            }
+        },
+        'handlers': {
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['require_debug_false'],
+                'class': 'django.utils.log.AdminEmailHandler'
+            },
+            'logfile': {
+                'class': 'logging.handlers.WatchedFileHandler',
+                'filename': '/var/log/django/error.log'
+            },
+        },
+        'loggers': {
+            'django.request': {
+                'handlers': ['mail_admins'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+            'django': {
+                'handlers': ['logfile'],
+                'level': 'ERROR',
+                'propagate': False,
+            },
         }
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        },
-        'logfile': {
-            'class': 'logging.handlers.WatchedFileHandler',
-            'filename': '/var/log/django/error.log'
-        },
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-        'django': {
-            'handlers': ['logfile'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-    }
 }
 
     # Database
@@ -135,7 +131,6 @@ if not settings.DEBUG:
         }
     }
 
-
     # Internationalization
     # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
@@ -149,14 +144,13 @@ if not settings.DEBUG:
 
     USE_TZ = True
 
-
     # Static files (CSS, JavaScript, Images)
     # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
     STATIC_URL = '/static/'
 
     STATIC_ROOT = '/var/www/bobblehead/static_root/'
-    #os.path.join(os.path.dirname(BASE_DIR), "static_root")
+    # os.path.join(os.path.dirname(BASE_DIR), "static_root")
 
     STATICFILES_DIRS = (
         os.path.join(BASE_DIR, "static", "bobblehead"),
