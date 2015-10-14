@@ -22,7 +22,7 @@
       <h2>{{project.title}}</h2>
       <div>
         Created by:
-        <a href="{% url 'user_profile:view' project.user.user_key %}">
+        <a href="{% url 'user_profile:show' project.user.user_key %}">
           {{project.user}}
         </a>
       </div>

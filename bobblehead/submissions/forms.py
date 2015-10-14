@@ -6,7 +6,7 @@ from .models import Submission
 
 class SubmissionForm(ModelForm):
 
-    members_list = forms.CharField()
+    members_list = forms.CharField(required=False)
 
     class Meta:
         model = Submission
