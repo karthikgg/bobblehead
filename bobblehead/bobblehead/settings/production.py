@@ -32,7 +32,7 @@ if not settings.DEBUG and not settings.LOCAL_TEST:
     DEBUG = False
 
     # If DEBUG is off, ALLOWED_HOSTS must have values
-    ALLOWED_HOSTS = ['http://www.nanoprojects.org', 'http://nanoprojects.org']
+    ALLOWED_HOSTS = ['www.nanoprojects.org', 'nanoprojects.org']
 
     # Application definition
 
