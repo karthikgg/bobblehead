@@ -163,17 +163,26 @@
         }
 
 				// Payload for POST request
+				//$scope.description = encodeURIComponent($scope.description)
+				$scope.description_escaped = $scope.description.replace(/\\n/g, "\\n")
+                                      						   .replace(/\\'/g, "\\'")
+						                                       .replace(/\\"/g, '\\"')
+						                                       .replace(/\\&/g, "\\&")
+						                                       .replace(/\\r/g, "\\r")
+						                                       .replace(/\\t/g, "\\t")
+						                                       .replace(/\\b/g, "\\b")
+						                                       .replace(/\\f/g, "\\f");
 				var payload = {
-					'title': encode($scope.title),
+					'title': $scope.title,
 					'collaborators': 1,
 					'difficulty': $scope.difficulty,
-					'description': encode($scope.description),
-					'tags_list': encode(tagString),
-					'articles': encode(articleString)
+					'description': $scope.description_escaped,
+					'tags_list': tagString,
+					'articles': articleString
 				};
 
         // POST request to submit data
-				$http.post('/projects/create_project/', payload).
+				$http.post('/projects/create_project/', payload, {"Content-Type": "application/json; charset=utf-8"}).
 					then (function(response) {
             $http.get('/projects/projects_JSON/').then(function(projectResponse){
               sessionStorage.removeItem('projects');

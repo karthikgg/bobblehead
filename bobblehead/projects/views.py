@@ -153,9 +153,12 @@ def create_project(request):
     GET: Return the form to create a project.
     POST: Create a new project and redirect to the project details
     """
+    print "In create_project"
     if request.method == "POST":
         print "raw data: %s" % request.body
-        temp = json.loads(request.POST.dict().keys()[0])
+        print "Request post dict keys: ", request.POST.dict().keys()
+        temp = json.loads(request.body)
+        print "Here is the temp: ", temp
         form = ProjectForm(temp)
 
         # check whether it's valid:
@@ -168,6 +171,7 @@ def create_project(request):
             # Save the project object - project needs to exist before
             # manytomany field is accessed.
             prj_obj.save()
+            print "The description is: ", prj_obj.description
             # get the list of tag objects to add to project
             print "The tags list raw is: ", form.cleaned_data['tags_list']
             print "The form title raw is: ", form.cleaned_data['title']
@@ -187,6 +191,7 @@ def create_project(request):
             print form.errors.as_data()
     else:
         # Remove when front end updated.
+        print "Wasn't a POST"
         form = ProjectForm()
     return render(request, 'projects/create_project.html', {'form': form})
 
@@ -252,7 +257,7 @@ def edit_project(request, project_id):
         return HttpResponseRedirect('/projects/'+str(project_id))
     else:
         if request.method == "POST":
-            temp = json.loads(request.POST.dict().keys()[0])
+            temp = json.loads(request.body)
             form = ProjectForm(temp, instance=project)
             # form = ProjectForm(request.POST, instance=project)
             # check whether it's valid:
