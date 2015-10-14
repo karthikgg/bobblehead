@@ -49,7 +49,7 @@
     <div class="form-group">
       <label for="id_articles" class="col-md-2 control-label">Resources</label>
       <div class="col-md-4">
-        <input type="text" class="form-control" id="id_articles" ng-keydown="addArticle($event)" ng-model="article" required>
+        <input type="text" class="form-control" id="id_articles" ng-keydown="addArticle($event)" ng-blur="addArticle($event)" ng-model="article" required>
         <div ng-repeat="article in articles">
           {% verbatim %}
             {{ article }} <a ng-click="removeArticle($index)" class="badge">x</a>
@@ -66,7 +66,7 @@
     <div class="form-group">
       <label for="id_tags" class="col-md-2 control-label">Tags</label>
       <div class="col-md-4">
-        <input type="text" class="form-control" id="id_tags" ng-keydown="checkKeyDown($event)" ng-model="searchText" ng-change="search()" required>
+        <input type="text" class="form-control" id="id_tags" ng-keydown="checkKeyDown($event)" ng-blur="checkKeyDown($event)" ng-model="searchText" ng-change="search()" required>
         <ul class="list-group">
           <li ng-repeat="suggestions in suggestions | limitTo: 3" class="list-group-item" ng-class="{active: selectedIndex === $index}">
             {% verbatim %}

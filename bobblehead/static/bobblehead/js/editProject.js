@@ -85,7 +85,7 @@
 					$scope.search();
 				}
 			}
-      else if (event.keyCode === 13) { //Enter pressed
+      else if (event.keyCode === 13 || event.type == "blur") { //Enter pressed
         if ($scope.searchText.length > 0) {
           event.preventDefault();
           $scope.pushToSelectedTags($scope.searchText); // Force add raw data, not suggestion
@@ -122,7 +122,7 @@
 
 		$scope.addArticle = function(event) {
 			if ($scope.article) {
-				if (event.keyCode === 13 || event.keyCode === 9) { //Enter or Tab pressed
+				if (event.keyCode === 13 || event.keyCode === 9 || event.type == "blur") { //Enter or Tab pressed
 					// To-do: validate for URL instead of >0
 					if ($scope.article.length > 0 && $scope.articles.indexOf($scope.article) == -1) {
 						event.preventDefault();
@@ -186,7 +186,7 @@
 						                                       .replace(/\\t/g, "\\t")
 						                                       .replace(/\\b/g, "\\b")
 						                                       .replace(/\\f/g, "\\f");
-						                                       
+
 				var payload = {
 					'title': $scope.title,
 					'collaborators': 1,
