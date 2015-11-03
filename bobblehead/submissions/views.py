@@ -12,6 +12,9 @@ from projects.models import Project
 from user_profile.models import UserProfile
 from user_profile.views import is_authenticated
 
+from comments.forms import CommentForm
+from comments.models import Comment
+
 
 @is_authenticated()
 def _add_members_to_submission(request, member_emails, submission):
@@ -56,8 +59,10 @@ def show_submission(request, submission_id):
     """ Show a submission based on the id,
         usually redirects from project details page
     """
+    comment_form = CommentForm()
     try:
         submission = Submission.objects.get(pk=submission_id)
+        comment_list = Comment.objects.filter(submission=submission).order_by('-posted')
     except Submission.DoesNotExist:
         raise Http404("Submission object not found")
-    return render(request, 'submissions/show_submission.html', {'submission': submission})
+    return render(request, 'submissions/show_submission.html', {'submission': submission, 'comment_form': comment_form, 'comment_list': comment_list})

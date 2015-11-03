@@ -46,6 +46,7 @@ if not settings.DEBUG and not settings.LOCAL_TEST:
         'projects',
         'user_profile',
         'submissions',
+        'comments',
     )
 
     MIDDLEWARE_CLASSES = (
