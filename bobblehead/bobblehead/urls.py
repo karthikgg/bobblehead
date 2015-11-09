@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^$', projects_views.index),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^projects/', include('projects.urls', namespace="projects")),
+    url(r'^problems/', include('problems.urls', namespace="problems")),
     url(r'^user_profile/', include('user_profile.urls', namespace="user_profile")),
     url(r'^submissions/', include('submissions.urls', namespace="submissions")),
     url(r'^comments/', include('comments.urls', namespace="comments"))

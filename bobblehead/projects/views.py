@@ -12,6 +12,9 @@ from user_profile.models import UserProfile
 
 from submissions.models import Submission
 
+import markdown
+import bleach
+
 import json
 
 
@@ -40,9 +43,12 @@ def projects_JSON(request):
     """ Return a list of projects with only a
         select list of fields (as set by the fields param)
     """
+    projects = Project.objects.all()
+    for p in projects:
+        p.description = bleach.clean(markdown.markdown(p.description, extensions=['markdown.extensions.fenced_code']), strip=True)
     projects_as_json = serializers.serialize(
         'json',
-        Project.objects.all(),
+        projects,
         fields=('title',
                 'posted',
                 'difficulty',
@@ -119,21 +125,14 @@ def index(request):
     return render(request, 'projects/index.html', context)
 
 
-def request_meta(request):
-    """ Return the meta itmes. """
-    vl = request.META.items()
-    vl.sort()
-    html = []
-    for k, v in vl:
-        html.append('<tr><td>%s</td><td>%s</td>' % (k, v))
-    return HttpResponse('<table>%s</table>' % '\n'.join(html))
-
-
 @is_authenticated()
 def project_detail(request, project_id):
     """ Return the project details by project_id. """
     try:
         project = Project.objects.get(pk=project_id)
+        project.description = markdown.markdown(bleach.clean(project.description, strip=True), extensions=['markdown.extensions.fenced_code'])
+        p2 = Project.objects.get(pk=project_id)
+        print "This is the unchanged? project object: ", p2.description
         user_profile = UserProfile.objects.get(email=request.session['email'])
         submissions_list = Submission.objects.filter(project=project)
     except Project.DoesNotExist:
@@ -156,6 +155,7 @@ def create_project(request):
         # check whether it's valid:
         if form.is_valid():
             prj_obj = form.save(commit=False)
+            # prj_obj.description = bleach.clean(prj_obj.description, strip=True)
             # fint the user profile object based on the email in session
             user_profile = UserProfile.objects.get(email=request.session['email'])
             prj_obj.user = user_profile
@@ -185,6 +185,7 @@ def _get_tags(tag_string):
         If tags already exist, dont create.
         Return a list of tag objects to add to the project
     """
+    print "inside get_tags, string is: ", tag_string
     tag_objects_list = []
     # remove all whitespaces
     tag_string_cleaned = tag_string.replace(" ", "")
@@ -197,6 +198,7 @@ def _get_tags(tag_string):
             tag_object.save()
         if tag_object not in tag_objects_list:
             tag_objects_list.append(tag_object)
+    print "this is the tag objects list: ", tag_objects_list
     return tag_objects_list
 
 
@@ -229,6 +231,7 @@ def edit_project(request, project_id):
     """
     try:
         project = Project.objects.get(pk=project_id)
+        print "This is the unchanged project: ", project.description
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     # check whether the user is the one who created this project
@@ -250,6 +253,7 @@ def edit_project(request, project_id):
                 except:
                     pass
                 m = form.save(commit=False)
+                # m.description = bleach.clean(m.description, strip=True)
                 m.save()
                 tag_objects_list = _get_tags(form.cleaned_data['tags_list'])
                 article_object_list = _get_articles(form.cleaned_data['articles'])

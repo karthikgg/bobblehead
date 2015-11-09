@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'user_profile',
     'submissions',
     'comments',
+    'problems',
 )
 
 MIDDLEWARE_CLASSES = (
