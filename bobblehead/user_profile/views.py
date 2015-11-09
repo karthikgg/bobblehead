@@ -32,6 +32,7 @@ def is_authenticated():
                 namespace = func.__module__.split('.')[0]
                 function_call = str(namespace+':'+func.__name__)
                 redirect = reverse(function_call, args=args, kwargs=kwargs)
+                print 'this is the redirect url: ', redirect
                 return render(request, 'user_profile/login_projects.html', {'redirect':redirect})
         return wrapper
     return decorator
@@ -115,9 +116,10 @@ def view(request, user_key):
 
 def login_udacity(request):
     """ Authenticate with Udacity using OpenID """
-    redirect_on_return = '/projects/'
+    if not hasattr(login_udacity, 'redirect_on_return'):
+        login_udacity.redirect_on_return = '/projects/'
     if request.method == "POST":
-        redirect_on_return = request.POST['redirect']
+        login_udacity.redirect_on_return = request.POST['redirect']
         cons_obj = consumer.Consumer(request.session, None)
         openid_url = "https://www.udacity.com/openid"
         auth_request = cons_obj.begin(openid_url)
@@ -173,4 +175,5 @@ def login_udacity(request):
                 user_profile.save()
         else:
             print "Nope"
-        return HttpResponseRedirect(redirect_on_return)
+        print ">>>>>>> we will redirect to - ", login_udacity.redirect_on_return
+        return HttpResponseRedirect(login_udacity.redirect_on_return)
