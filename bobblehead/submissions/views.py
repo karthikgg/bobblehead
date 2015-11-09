@@ -11,7 +11,8 @@ from .forms import SubmissionForm
 from projects.models import Project
 from user_profile.models import UserProfile
 from user_profile.views import is_authenticated
-
+import markdown
+import bleach
 from comments.forms import CommentForm
 from comments.models import Comment
 
@@ -63,6 +64,10 @@ def show_submission(request, submission_id):
     try:
         submission = Submission.objects.get(pk=submission_id)
         comment_list = Comment.objects.filter(submission=submission).order_by('-posted')
+        # print "This submissions has the following comments:" 
+        for comment in comment_list:
+            comment.content = markdown.markdown(comment.content, extensions=['markdown.extensions.fenced_code'])
+        #     print comment.content
     except Submission.DoesNotExist:
         raise Http404("Submission object not found")
     return render(request, 'submissions/show_submission.html', {'submission': submission, 'comment_form': comment_form, 'comment_list': comment_list})

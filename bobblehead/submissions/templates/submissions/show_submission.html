@@ -76,9 +76,17 @@
       <a href="{% url 'user_profile:show' comment.user.user_key %}">
           {{ comment.user.nickname }}
       </a>
+      <p>
+<!--       <form action="{% url 'comments:edit_comment' submission.id comment.id %}" method="post">
+        <button type="submit">Edit</button>
+      </form>
+      <form action="{% url 'comments:delete_comment' submission.id comment.id %}" method="post">
+        <button type="submit">Delete</button>
+      </form> -->
+      <a href="{% url 'comments:edit_comment' submission.id comment.id %}">Edit</a>|<a href="{% url 'comments:delete_comment' submission.id comment.id %}">Delete</a>
     </div>
     <div class="col-md-10">
-        <p>{{comment.content}}</p>
+        <p>{{comment.content|safe}}</p>
         <p><em>{{comment.posted}}</em></p>
     </div>
   </div>
