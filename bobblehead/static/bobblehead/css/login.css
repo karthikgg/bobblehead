@@ -5,11 +5,11 @@
 }
 
 .nav-brand {
-  font: 1.25em "Open Sans", sans-serif;
+  font: 700 small-caps 1.5em/0.8 "Open Sans", sans-serif;
 }
 
 .nav-item {
-  font: 1.1em "Open Sans", sans-serif;
+  font: 700 1.1em "Open Sans", sans-serif;
 }
 
 .jumbotron {
@@ -45,6 +45,10 @@
   font: 700 small-caps 1.5em "Open Sans", sans-serif;
 }
 
+.login-text>span {
+  border-bottom: 1px solid #111;
+}
+
 .login-img {
   max-width: 100%;
   width: 100px;
@@ -54,6 +58,11 @@
 
 .about-col {
   padding-top: 2em;
+}
+
+.about {
+  max-width: 450px;
+  margin: 0 auto;
 }
 
 .about-title {
@@ -80,6 +89,7 @@
 
   .about {
     text-align: left;
+    max-width: 600px;
   }
 }
 
