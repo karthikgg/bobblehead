@@ -54,7 +54,7 @@
     </div>
   </div>
 
-  <form action="{% url 'comments:new_comment' submission.id %}" method="post" class="form-horizontal" autocomplete="off">
+  <form action="{% url 'submissions:add_new_comment' submission.id %}" method="post" class="form-horizontal" autocomplete="off">
     {% csrf_token %}
     <div class="form-group">
       <label for="id_content" class="col-md-2 control-label">Comment</label>
@@ -70,7 +70,7 @@
     </div>
   </form>
 
-{% for comment in comment_list %}
+{% for comment in comments_list %}
   <div class="row pad-top-20">
     <div class="col-md-2 text-right">
       <a href="{% url 'user_profile:show' comment.user.user_key %}">
@@ -84,7 +84,7 @@
         <button type="submit">Delete</button>
       </form> -->
       {% if comment.user.email == user_email %}
-        <a href="{% url 'comments:edit_comment' submission.id comment.id %}">Edit</a> | <a href="{% url 'comments:delete_comment' submission.id comment.id %}">Delete</a>
+        <a href="{% url 'submissions:edit_comment' submission.id comment.id %}">Edit</a> | <a href="{% url 'submissions:delete_comment' submission.id comment.id %}">Delete</a>
       {% endif %}
     </div>
     <div class="col-md-10">

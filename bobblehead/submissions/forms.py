@@ -10,4 +10,4 @@ class SubmissionForm(ModelForm):
 
     class Meta:
         model = Submission
-        exclude = ('project', 'members', 'comment', )
+        exclude = ('project', 'members', 'comments', )

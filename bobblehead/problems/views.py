@@ -11,6 +11,7 @@ from user_profile.views import is_authenticated
 from user_profile.models import UserProfile
 
 from comments.forms import CommentForm
+from comments.models import Comment
 
 import projects
 import json
@@ -114,7 +115,7 @@ def problem_detail(request, problem_id):
         solutions_list = Solution.objects.filter(problem=problem)# need to add a way to get all answers to all questions here...
     except Problem.DoesNotExist:
         raise Http404("Project does not exist")
-    context = {'problem': problem, 'current_user': request.session['email'], 'solutions_list':solutions_list}
+    context = {'problem': problem, 'user_email': request.session['email'], 'solutions_list':solutions_list}
     return render(request, 'problems/problem_detail.html', context)
 
 
@@ -201,8 +202,7 @@ def add_new_comment(request, solution_id, problem_id):
     for comment in solution.comments.order_by('-posted'):
         comment.content = markdown.markdown(comment.content, extensions=['markdown.extensions.fenced_code'])
         comments_list.append(comment)
-    context = {'solution': solution, 'problem': problem, 'current_user': request.session['email'], 'comments_list':comments_list}
-    return render(request, 'problems/show_solution.html', context)
+    return HttpResponseRedirect('/problems/'+str(problem_id)+'/show_solution/'+str(solution_id))
 
 
 @is_authenticated()
@@ -217,14 +217,70 @@ def show_solution(request, problem_id, solution_id):
     for comment in solution.comments.order_by('-posted'):
         comment.content = markdown.markdown(comment.content, extensions=['markdown.extensions.fenced_code'])
         comments_list.append(comment)
-    context = {'solution': solution, 'problem': problem, 'current_user': request.session['email'], 'comments_list':comments_list}
+    context = {'solution': solution, 'problem': problem, 'user_email': request.session['email'], 'comments_list':comments_list}
     return render(request, 'problems/show_solution.html', context)
 
 
+@is_authenticated()
+def edit_comment(request, problem_id, solution_id, comment_id):
+    print ">>>>inside edit comment for problems solution"
+    solution = Solution.objects.get(pk=solution_id)
+    try:
+        comment = Comment.objects.get(pk=comment_id)
+        if comment.user.email != request.session['email']:
+            return HttpResponseRedirect('/problems/'+str(problem_id)+'/show_solution/'+str(solution_id))
+    except Comment.DoesNotExist:
+        raise Http404("Comment does not exist")
+    if request.method == 'POST':
+        comment_form = CommentForm(request.POST, instance=comment)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.user = UserProfile.objects.get(email=request.session['email'])
+            # comment.content = bleach.clean(comment.content, strip=True)
+            print "Comment post bleach: ", comment.content
+            # comment.content = markdown.markdown(comment.content)
+            print "this is the comment content: ", comment.content
+            comment.save()
+            solution.comments.add(comment)
+            return HttpResponseRedirect('/problems/'+str(problem_id)+'/show_solution/'+str(solution_id))
+        else:
+            print "comment wasn't valid!"
+            print comment_form.errors
+    elif request.method == 'GET':
+        print ">>>>get edit comment"
+        c_edit = comment
+        # c_edit.content = bleach.clean(c_edit.content, strip=True)
+        comment_form = CommentForm(instance=c_edit)
+
+        return render(request, 'problems/edit_comment.html',
+                      {'form': comment_form, 'problem_id': problem_id, 'solution_id': solution_id, 'comment':comment})
+
 
 @is_authenticated()
-def delete_problem(request, problem_id):
-    pass
+def delete_comment(request, problem_id, solution_id, comment_id):
+    try:
+        solution = Solution.objects.get(pk=solution_id)
+        comment = Comment.objects.get(pk=comment_id)
+        if comment.user.email != request.session['email']:
+            return HttpResponseRedirect('/submissions/show/'+str(sub_id))
+        solution.comments.remove(comment)
+        comment.delete()
+
+    except Comment.DoesNotExist:
+        raise Http404("Comment does not exist")
+    return HttpResponseRedirect('/problems/'+str(problem_id)+'/show_solution/'+str(solution_id))
+
+
+
+# @is_authenticated()
+# def delete_problem(request, problem_id):
+#     problem = Problem.objects.get(pk=problem_id)
+#     try:
+#         solutions_list = Solution.objects.filter(problem=problem)
+#         for solution in solutions_list:
+#             for comment in solution.comments:
+#                 comment.delete()
+
 
 
 @is_authenticated()
