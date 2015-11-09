@@ -48,8 +48,8 @@ def edit_comment(request, sub_id, comment_id):
     except Comment.DoesNotExist:
         raise Http404("Comment does not exist")
     if request.method == 'POST':
-        temp = json.loads(request.body)
-        comment_form = CommentForm(temp, instance=comment)
+        comment_form = CommentForm(request.POST, instance=comment)
+        print "Here is the post body: ", request.POST
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.user = UserProfile.objects.get(email=request.session['email'])
@@ -62,13 +62,14 @@ def edit_comment(request, sub_id, comment_id):
             return HttpResponseRedirect('/submissions/show/' + str(sub_id))
         else:
             print "comment wasn't valid!"
+            print comment_form.errors
     elif request.method == 'GET':
         c_edit = comment
         c_edit.content = bleach.clean(c_edit.content, strip=True)
         comment_form = CommentForm(instance=c_edit)
 
         return render(request, 'comments/edit_comment.html',
-                      {'form': comment_form})
+                      {'form': comment_form, 'sub_id': sub_id, 'comment':comment})
 
 
 @is_authenticated()
