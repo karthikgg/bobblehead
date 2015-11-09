@@ -10,7 +10,7 @@
 <body class="container">
 	<div class="row pad-10 margin-top-20 highlight">
 		<div class="col-md-12">
-      <a href="/projects/{{submission.project.id}}">
+      <a href="/problems/{{solution.project.id}}">
 				<img src="{% static "images/arrow-back-white-1x.png" %}" alt="Back to Project"/>
 				Back
 			</a>
@@ -19,16 +19,7 @@
 
   <div class="row">
     <div class="col-md-12">
-      <h2>{{submission.project.title}}</h2>
-    </div>
-  </div>
-
-  <div class="row pad-top-20">
-    <div class="col-md-2 text-right">
-      <b>Submission Link</b>
-    </div>
-    <div class="col-md-10">
-      <a href="{{ submission.link }}">{{ submission.link }}</a>
+      <h2>{{solution.problem.title}}</h2>
     </div>
   </div>
 
@@ -37,24 +28,23 @@
       <b>Description</b>
     </div>
     <div class="col-md-10">
-      {{ submission.description|safe}}
+      {{ solution.description|safe}}
     </div>
   </div>
 
-  <div class="row pad-top-20">
+   <div class="row pad-top-20">
     <div class="col-md-2 text-right">
       <b>Submitted By</b>
     </div>
     <div class="col-md-10">
-      {% for member in submission.members.all %}
-        <a href="{% url 'user_profile:show' member.user_key %}">
-          {{ member.nickname }}
-        </a>
-      {% endfor %}
+      <a href="{% url 'user_profile:show' solution.user.user_key %}">
+          {{ solution.user.nickname }}
+      </a>
+
     </div>
   </div>
 
-  <form action="{% url 'comments:new_comment' submission.id %}" method="post" class="form-horizontal" autocomplete="off">
+  <form action="{% url 'problems:add_new_comment' problem.id solution.id %}" method="post" class="form-horizontal" autocomplete="off">
     {% csrf_token %}
     <div class="form-group">
       <label for="id_content" class="col-md-2 control-label">Comment</label>
@@ -70,21 +60,15 @@
     </div>
   </form>
 
-{% for comment in comment_list %}
+{% for comment in comments_list %}
   <div class="row pad-top-20">
     <div class="col-md-2 text-right">
       <a href="{% url 'user_profile:show' comment.user.user_key %}">
           {{ comment.user.nickname }}
       </a>
       <p>
-<!--       <form action="{% url 'comments:edit_comment' submission.id comment.id %}" method="post">
-        <button type="submit">Edit</button>
-      </form>
-      <form action="{% url 'comments:delete_comment' submission.id comment.id %}" method="post">
-        <button type="submit">Delete</button>
-      </form> -->
       {% if comment.user.email == user_email %}
-        <a href="{% url 'comments:edit_comment' submission.id comment.id %}">Edit</a> | <a href="{% url 'comments:delete_comment' submission.id comment.id %}">Delete</a>
+        <a href="">Edit</a> | <a href="">Delete</a>
       {% endif %}
     </div>
     <div class="col-md-10">

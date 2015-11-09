@@ -11,7 +11,7 @@
 <body class="container">
   <div class="row pad-10 margin-top-20 highlight">
     <div class="col-md-12">
-      <a href="{% url 'projects:index' %}">
+      <a href="{% url 'problems:problems_list' %}">
         <img src="{% static "images/arrow-back-white-1x.png" %}" alt="Return to main page"/>
         Back
       </a>
@@ -19,17 +19,17 @@
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>{{project.title}}</h2>
+      <h2>{{problem.title}}</h2>
       <div>
         Created by:
-        <a href="{% url 'user_profile:show' project.user.user_key %}">
-          {{project.user}}
+        <a href="{% url 'user_profile:show' problem.user.user_key %}">
+          {{problem.user}}
         </a>
       </div>
       <div>
-        Posted: {{project.posted}}
+        Posted: {{problem.posted}}
       </div>
-      <h4>{{project.description|safe}}</h4>
+      <h4>{{problem.description|safe}}</h4>
     </div>
   </div>
   <hr>
@@ -38,20 +38,7 @@
       <b>Difficulty</b>
     </div>
     <div class="col-md-10">
-      {{ project.difficulty }}
-    </div>
-  </div>
-
-  <div class="row pad-top-20">
-    <div class="col-md-2">
-      <b>Resources</b>
-    </div>
-    <div class="col-md-10">
-      {% for article in project.articles.all %}
-        <div>
-          <a href="{{ article.url }}"> {{ article.url }}</a>
-        </div>
-      {% endfor %}
+      {{ problem.difficulty }}
     </div>
   </div>
 
@@ -61,7 +48,7 @@
     </div>
     <div class="col-md-10">
       <ul class="list-unstyled">
-      {% for tag in project.tags.all %}
+      {% for tag in problem.tags.all %}
           <li class="badge">{{ tag.tag_name }}</li>
       {% endfor %}
       </ul>
@@ -73,7 +60,7 @@
     <div class="col-md-offset-2 col-md-1">
       <div class="text-center">
         <div>
-          <a href="{% url 'projects:edit_project' project.id %}">
+          <a href="{% url 'problems:edit_problem' problem.id %}">
             <img src="{% static "images/edit-black-2x.png" %}" alt="Edit"/>
           </a>
         </div>
@@ -84,7 +71,7 @@
     <div class="col-md-1">
       <div class="text-center">
         <div>
-          <a href="{% url 'projects:delete_project' project.id %}">
+          <a href="{% url 'problems:delete_problem' project.id %}">
             <img src="{% static "images/delete-black-2x.png" %}" alt="Delete"/>
           </a>
         </div>
@@ -97,27 +84,27 @@
 
   <div class="row">
     <div class="col-md-12">
-      <h4>Submissions for this project</h4>
+      <h4>Solutions for this problem</h4>
     </div>
     <div class="col-md-12">
-    {% if submissions_list %}
+    {% if solutions_list %}
       <ul class="list-unstyled">
-       {% for submission in submissions_list %}
+       {% for solution in solutions_list %}
        <li>
-         <a href="{% url 'submissions:show_submission' submission.id %}">{{submission.link}}, by - {% for member in submission.members.all %} {{ member.nickname }} | {% endfor %} </a>
+         <a href="{% url 'problems:show_solution' problem.id solution.id %}">{{solution.title}}, by {{ solution.user.nickname }}</a>
         
        </li>
        {% endfor %}
      </ul>
     {% else %}
-        No submissions yet
+        No solutions yet
     {% endif %}
     </div>
   </div>
   <hr>
   <div class="row">
     <div class="col-md-12">
-      <b><a href="{% url 'submissions:new_submission' project.id %}">Submit your solution</a></b>
+      <b><a href="{% url 'problems:new_solution' problem.id %}">Submit your solution</a></b>
     </div>
   </div>
 

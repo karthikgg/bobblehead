@@ -1,5 +1,5 @@
 (function(){
-  var app = angular.module('editProject', []);
+  var app = angular.module('newProblem', []);
 
   app.config(['$httpProvider', function($httpProvider) {
     $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -8,14 +8,12 @@
   }]);
 
   app.controller('FormController', ['$scope', '$http', '$window', function($scope, $http, $window){
-    var projectData = JSON.parse(sessionStorage.getItem('projects'));
-    $scope.projectKey = $window.location.pathname.split('/')[2];
+		// Set defaults where necessary
+		$scope.difficulty = 'EASY';
 
-    var currentProject = findProject($scope.projectKey, projectData);
-
-    // Populate tags
-    $scope.tags = [];
-    projectData.forEach(getData);
+    $scope.tags = []
+    var problemData = JSON.parse(sessionStorage.getItem('problems'));
+    problemData.forEach(getData);
     function getData(allData) {
       allData.fields.tags.forEach(getTags);
       function getTags(tag) {
@@ -25,25 +23,9 @@
       }
     }
 
-    function findProject(projectKey, allProjects) {
-      var currentProject;
-      allProjects.forEach(getProject);
-      function getProject(value) {
-        if (value.pk == projectKey) {
-          currentProject = value.fields;
-        }
-      }
-      return currentProject;
-    }
-
-    $scope.title = currentProject.title;
-   	// $scope.description = currentProject.description;
-    $scope.difficulty = currentProject.difficulty;
-    $scope.articles = currentProject.articles;
-    $scope.selectedTags = currentProject.tags;
-
     $scope.searchText = '';
     $scope.suggestions = [];
+		$scope.selectedTags = [];
 		$scope.selectedIndex = 0;
 
     $scope.search = function() {
@@ -77,7 +59,7 @@
 					$scope.selectedIndex--;
 				}
 			}
-			else if (event.keyCode === 9) { //Tab pressed
+			else if (event.keyCode === 9) { //Tab (9) pressed
 				if ($scope.searchText.length > 0) {
 					event.preventDefault();
 					$scope.addToSelectedTags($scope.selectedIndex);
@@ -85,15 +67,15 @@
 					$scope.search();
 				}
 			}
-      else if (event.keyCode === 13 || event.type == "blur") { //Enter pressed
+      else if (event.keyCode === 13 || event.type == "blur") { // Enter (13) pressed
         if ($scope.searchText.length > 0) {
-          event.preventDefault();
+					event.preventDefault();
           $scope.pushToSelectedTags($scope.searchText); // Force add raw data, not suggestion
           $scope.searchText = '';
-          $scope.search();
+					$scope.search();
         }
       }
-    }
+		}
 
     $scope.addToSelectedTags = function(index) {
 			if ($scope.suggestions.length > 0) {
@@ -115,38 +97,39 @@
 			$scope.selectedTags.splice(index, 1);
 		}
 
-    // Add articles
-		$scope.article = '';
-		$scope.maxArticlesText = '';
-		$scope.maxArticles = 5;
+  //   // Add articles
+		// $scope.article = '';
+		// $scope.articles = [];
+		// $scope.maxArticlesText = '';
+		// $scope.maxArticles = 5;
 
-		$scope.addArticle = function(event) {
-			if ($scope.article) {
-				if (event.keyCode === 13 || event.keyCode === 9 || event.type == "blur") { //Enter or Tab pressed
-					// To-do: validate for URL instead of >0
-					if ($scope.article.length > 0 && $scope.articles.indexOf($scope.article) == -1) {
-						event.preventDefault();
-						if ($scope.articles.length < $scope.maxArticles) {
-							$scope.articles.push($scope.article);
-							$scope.article = '';
-						}
-						if ($scope.articles.length == $scope.maxArticles) {
-							$scope.maxArticlesText = 'Maximum number of articles reached';
-						}
-					}
-				}
-			}
-		}
+		// $scope.addArticle = function(event) {
+		// 	if ($scope.article) {
+		// 		if (event.keyCode === 13 || event.keyCode === 9 || event.type == "blur") { //Enter or Tab pressed
+		// 			// To-do: validate for URL instead of >0
+		// 			if ($scope.article.length > 0 && $scope.articles.indexOf($scope.article) == -1) {
+		// 				event.preventDefault();
+		// 				if ($scope.articles.length < $scope.maxArticles) {
+		// 					$scope.articles.push($scope.article);
+		// 					$scope.article = '';
+		// 				}
+		// 				if ($scope.articles.length == $scope.maxArticles) {
+		// 					$scope.maxArticlesText = 'Maximum number of articles reached';
+		// 				}
+		// 			}
+		// 		}
+		// 	}
+		// }
 
-		$scope.removeArticle = function(index) {
-			$scope.articles.splice(index, 1);
-			$scope.maxArticlesText = '';
-		}
+		// $scope.removeArticle = function(index) {
+		// 	$scope.articles.splice(index, 1);
+		// 	$scope.maxArticlesText = '';
+		// }
 
     // Submit function
 		$scope.submit = function() {
 			// Define required fields
-			var required = [$scope.title, $scope.difficulty, $scope.description, $scope.selectedTags, $scope.articles];
+			var required = [$scope.title, $scope.difficulty, $scope.description, $scope.selectedTags];
 			// Set counter to check each required field actually contains data
 			var allDataPresent = '0';
       required.forEach(checkData);
@@ -178,38 +161,35 @@
           return temp;
         }
 
-				// $scope.description_escaped = $scope.description.replace(/\\n/g, "\\n")
-    //                                   						   .replace(/\\'/g, "\\'")
-				// 		                                       .replace(/\\"/g, '\\"')
-				// 		                                       .replace(/\\&/g, "\\&")
-				// 		                                       .replace(/\\r/g, "\\r")
-				// 		                                       .replace(/\\t/g, "\\t")
-				// 		                                       .replace(/\\b/g, "\\b")
-				// 		                                       .replace(/\\f/g, "\\f");
-
+				// Payload for POST request
+				//$scope.description = encodeURIComponent($scope.description)
+				$scope.description_escaped = $scope.description.replace(/\\n/g, "\\n")
+                                      						   .replace(/\\'/g, "\\'")
+						                                       .replace(/\\"/g, '\\"')
+						                                       .replace(/\\&/g, "\\&")
+						                                       .replace(/\\r/g, "\\r")
+						                                       .replace(/\\t/g, "\\t")
+						                                       .replace(/\\b/g, "\\b")
+						                                       .replace(/\\f/g, "\\f");
 				var payload = {
 					'title': $scope.title,
-					'collaborators': 1,
 					'difficulty': $scope.difficulty,
 					'description': $scope.description_escaped,
 					'tags_list': tagString,
-					'articles': articleString
 				};
 
         // POST request to submit data
-
-        $http.post('/projects/' + $scope.projectKey + '/edit_project/', payload, {"Content-Type": "application/json; charset=utf-8"}).
+				$http.post('/problems/create_problem/', payload, {"Content-Type": "application/json; charset=utf-8"}).
 					then (function(response) {
-            $http.get('/projects/projects_JSON/').then(function(projectResponse){
-              sessionStorage.removeItem('projects');
+            $http.get('/problems/problems_JSON/').then(function(projectResponse){
+              sessionStorage.removeItem('problems');
         			var data = JSON.parse(JSON.parse(projectResponse.data));
-        			sessionStorage.setItem('projects', JSON.stringify(data));
+        			sessionStorage.setItem('problems', JSON.stringify(data));
               // console.log(JSON.stringify(data.data, null, 2));
-              $window.location.href = '/projects/' + response.data;
+              $window.location.href = '/problems/' + response.data;
             });
           });
       }
     }
-
   }]);
 })();

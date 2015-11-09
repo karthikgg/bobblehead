@@ -10,4 +10,4 @@ class CommentForm(ModelForm):
 
     class Meta:
         model = Comment
-        exclude = ('submission', 'user', 'posted')
+        exclude = ('user', 'posted')

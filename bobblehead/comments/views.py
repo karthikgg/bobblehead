@@ -29,7 +29,7 @@ def new_comment(request, sub_id):
             comment = comment_form.save(commit=False)
             comment.user = user
             comment.submission = submission
-            # comment.content = bleach.clean(comment.content, strip=True)
+            comment.content = bleach.clean(comment.content, strip=True)
             print "Comment post bleach: ", comment.content
             # comment.content = markdown.markdown(comment.content)
             print "this is the comment content: ", comment.content
@@ -65,7 +65,7 @@ def edit_comment(request, sub_id, comment_id):
             print comment_form.errors
     elif request.method == 'GET':
         c_edit = comment
-        c_edit.content = bleach.clean(c_edit.content, strip=True)
+        # c_edit.content = bleach.clean(c_edit.content, strip=True)
         comment_form = CommentForm(instance=c_edit)
 
         return render(request, 'comments/edit_comment.html',
