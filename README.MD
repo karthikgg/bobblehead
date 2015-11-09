@@ -5,9 +5,14 @@ This is a platform for posting and browsing project ideas (outside regular cours
 
 PREREQUISITES: 
 
+pip install -r /path/to/requirements.txt
+
 - Python 2.7+
 - Django 1.8
 - python-openid 2.2.5
+- psycopg2
+- Markdown (for markdown in comments)
+- bleach (for sanitizing input)
 - SQLLite database (Django takes care of that, we want to change to POSTGRESQL)
 - If using PostgreSQL backend 
 	- install postgresql http://www.postgresql.org/download/
