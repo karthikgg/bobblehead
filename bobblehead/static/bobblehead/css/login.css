@@ -36,6 +36,15 @@
   color: #fff;
 }
 
+.login-col {
+  padding-bottom: 2em;
+  border-bottom: 1px solid #eee;
+}
+
+.login-text {
+  font: 700 small-caps 1.5em "Open Sans", sans-serif;
+}
+
 .login-img {
   max-width: 100%;
   width: 100px;
@@ -43,9 +52,34 @@
   margin: 0 auto;
 }
 
+.about-col {
+  padding-top: 2em;
+}
+
+.about-title {
+  font: 700 small-caps 1.4em "Open Sans", sans-serif;
+}
+
+.about-text {
+  font: 1.25em "Open Sans", sans-serif;
+  padding-top: 0.5em;
+}
+
 @media screen and (min-width:768px) {
   .prop-text {
     font-size: 1.2em;
+  }
+
+  .login-col {
+    border-bottom: none;
+  }
+
+  .about-col {
+    padding-top: 0;
+  }
+
+  .about {
+    text-align: left;
   }
 }
 
