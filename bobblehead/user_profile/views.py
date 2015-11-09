@@ -4,6 +4,7 @@ from django.http import Http404
 # from django.contrib.auth.forms import UserCreationForm
 # from projects.models import Project
 from django.contrib.auth import logout
+from django.core.urlresolvers import reverse
 from .forms import UserProfileForm
 from .models import UserProfile
 
@@ -18,6 +19,7 @@ from functools import wraps
 
 from config import openid_settings
 
+
 def is_authenticated():
     """ Decorator to check if user is authenticated """
     def decorator(func):
@@ -26,7 +28,11 @@ def is_authenticated():
             if 'udacity_key' in request.session:
                 return func(request, *args, **kwargs)
             else:
-                return render(request, 'user_profile/login_projects.html')
+                # find the namespace, convert to string
+                namespace = func.__module__.split('.')[0]
+                function_call = str(namespace+':'+func.__name__)
+                redirect = reverse(function_call, args=args, kwargs=kwargs)
+                return render(request, 'user_profile/login_projects.html', {'redirect':redirect})
         return wrapper
     return decorator
 
@@ -109,7 +115,9 @@ def view(request, user_key):
 
 def login_udacity(request):
     """ Authenticate with Udacity using OpenID """
+    redirect_on_return = '/projects/'
     if request.method == "POST":
+        redirect_on_return = request.POST['redirect']
         cons_obj = consumer.Consumer(request.session, None)
         openid_url = "https://www.udacity.com/openid"
         auth_request = cons_obj.begin(openid_url)
@@ -133,39 +141,36 @@ def login_udacity(request):
 
         udacity_url = auth_request.redirectURL(realm_url, return_url)
         return HttpResponseRedirect(udacity_url)
+    elif request.method == "GET":
+        """ Callback function for authentication with Udacity. """
+        cons_obj = consumer.Consumer(request.session, None)
+        path = openid_settings.RETURN_URL
+        the_response = cons_obj.complete(request.GET, path)
+        if the_response.status == consumer.SUCCESS:
+            # Gather Info from Udacity
+            sreg_response = sreg.SRegResponse.fromSuccessResponse(the_response)
+            if sreg_response:
+                sreg_items = {
+                    'email': sreg_response.get('email'),
+                    'name': sreg_response.get('nickname'),
+                }
+            ax_response = ax.FetchResponse.fromSuccessResponse(the_response)
+            if ax_response:
+                ax_items = {
+                    'udacity_key': ax_response.get('http://openid.net/schema/person/guid')[0],
+                }
+            # Store items returned from Udacity in the session object
+            for key in sreg_items:
+                request.session[key] = sreg_items[key]
+            for key in ax_items:
+                request.session[key] = ax_items[key]
 
+            if not UserProfile.objects.filter(udacity_key=request.session['udacity_key']).exists():
+                user_profile = UserProfile(email=request.session['email'],
+                                           nickname=request.session['name'],
+                                           udacity_key=request.session['udacity_key'])
 
-def udacity_user(request):
-    """ Callback function for authentication with Udacity. """
-    cons_obj = consumer.Consumer(request.session, None)
-    path = openid_settings.RETURN_URL
-    the_response = cons_obj.complete(request.GET, path)
-    if the_response.status == consumer.SUCCESS:
-        # Gather Info from Udacity
-        sreg_response = sreg.SRegResponse.fromSuccessResponse(the_response)
-        if sreg_response:
-            sreg_items = {
-                'email': sreg_response.get('email'),
-                'name': sreg_response.get('nickname'),
-            }
-        ax_response = ax.FetchResponse.fromSuccessResponse(the_response)
-        if ax_response:
-            ax_items = {
-                'udacity_key': ax_response.get('http://openid.net/schema/person/guid')[0],
-            }
-        # Store items returned from Udacity in the session object
-        for key in sreg_items:
-            request.session[key] = sreg_items[key]
-        for key in ax_items:
-            request.session[key] = ax_items[key]
-
-        print "the session object is: ", request.session
-        if not UserProfile.objects.filter(udacity_key=request.session['udacity_key']).exists():
-            user_profile = UserProfile(email=request.session['email'],
-                                       nickname=request.session['name'],
-                                       udacity_key=request.session['udacity_key'])
-
-            user_profile.save()
-    else:
-        print "Nope"
-    return HttpResponseRedirect('/projects/')
+                user_profile.save()
+        else:
+            print "Nope"
+        return HttpResponseRedirect(redirect_on_return)

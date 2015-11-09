@@ -11,6 +11,9 @@ from .models import Comment
 
 import json
 
+import bleach
+import markdown
+
 
 # Create your views here.
 @is_authenticated()
@@ -21,9 +24,15 @@ def new_comment(request, sub_id):
         if comment_form.is_valid():
             user_email = request.session['email']
             user = UserProfile.objects.get(email=user_email)
+            # print "this is the form content: ", comment_form.cleaned_data['content']
+            # comment_form.content = markdown.Markdown(comment_form.content)
             comment = comment_form.save(commit=False)
             comment.user = user
             comment.submission = submission
+            comment.content = bleach.clean(comment.content, strip=True)
+            print "Comment post bleach: ", comment.content
+            comment.content = markdown.markdown(comment.content)
+            print "this is the comment content: ", comment.content
             comment.save()
             return HttpResponseRedirect('/submissions/show/' + str(sub_id))
         else:

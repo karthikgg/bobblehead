@@ -12,12 +12,12 @@
  <div class="row">
      <h1>Udacity Student Projects</h1>
  </div>
-
  <div class="row pad-top-20">
-       <form class="" action="{% url 'user_profile:login_udacity' %}" method="post">
+       <form class="" action="{% url 'user_profile:login_udacity'%}" method="post">
          {% csrf_token %}
          <h3>Sign in with Udacity</h3>
-         <input type="image" src="{% static "images/udacity-icon.png" %}" alt="Sign in with Udacity">
+         <input type="image" src="{% static "images/udacity-icon.png" %}" alt="Sign in with Udacity"/>
+         <input type="hidden" name="redirect" value ="{{redirect}}" />
        </form>
  </div>
 </body>

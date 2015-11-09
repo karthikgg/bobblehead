@@ -63,6 +63,9 @@ def show_submission(request, submission_id):
     try:
         submission = Submission.objects.get(pk=submission_id)
         comment_list = Comment.objects.filter(submission=submission).order_by('-posted')
+        # print "This submissions has the following comments:" 
+        # for comment in comment_list:
+        #     print comment.content
     except Submission.DoesNotExist:
         raise Http404("Submission object not found")
     return render(request, 'submissions/show_submission.html', {'submission': submission, 'comment_form': comment_form, 'comment_list': comment_list})
