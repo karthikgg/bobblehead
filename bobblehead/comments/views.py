@@ -24,19 +24,14 @@ def new_comment(request, sub_id):
         if comment_form.is_valid():
             user_email = request.session['email']
             user = UserProfile.objects.get(email=user_email)
-            # print "this is the form content: ", comment_form.cleaned_data['content']
-            # comment_form.content = markdown.Markdown(comment_form.content)
             comment = comment_form.save(commit=False)
             comment.user = user
             comment.submission = submission
             comment.content = bleach.clean(comment.content, strip=True)
-            print "Comment post bleach: ", comment.content
-            # comment.content = markdown.markdown(comment.content)
-            print "this is the comment content: ", comment.content
             comment.save()
             return HttpResponseRedirect('/submissions/show/' + str(sub_id))
         else:
-            print "comment wasn't valid!"
+            raise Http404("Form was invalid")
 
 
 @is_authenticated()
@@ -49,20 +44,14 @@ def edit_comment(request, sub_id, comment_id):
         raise Http404("Comment does not exist")
     if request.method == 'POST':
         comment_form = CommentForm(request.POST, instance=comment)
-        print "Here is the post body: ", request.POST
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
             comment.user = UserProfile.objects.get(email=request.session['email'])
             comment.submission = Submission.objects.get(pk=sub_id)
-            # comment.content = bleach.clean(comment.content, strip=True)
-            print "Comment post bleach: ", comment.content
-            # comment.content = markdown.markdown(comment.content)
-            print "this is the comment content: ", comment.content
             comment.save()
             return HttpResponseRedirect('/submissions/show/' + str(sub_id))
         else:
-            print "comment wasn't valid!"
-            print comment_form.errors
+            raise Http404("Form is invalid")
     elif request.method == 'GET':
         c_edit = comment
         # c_edit.content = bleach.clean(c_edit.content, strip=True)

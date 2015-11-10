@@ -32,7 +32,6 @@ def is_authenticated():
                 namespace = func.__module__.split('.')[0]
                 function_call = str(namespace+':'+func.__name__)
                 redirect = reverse(function_call, args=args, kwargs=kwargs)
-                print 'this is the redirect url: ', redirect
                 return render(request, 'user_profile/login_projects.html', {'redirect':redirect})
         return wrapper
     return decorator
@@ -174,6 +173,5 @@ def login_udacity(request):
 
                 user_profile.save()
         else:
-            print "Nope"
-        print ">>>>>>> we will redirect to - ", login_udacity.redirect_on_return
+            pass
         return HttpResponseRedirect(login_udacity.redirect_on_return)
