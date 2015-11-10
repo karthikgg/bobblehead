@@ -132,7 +132,6 @@ def project_detail(request, project_id):
         project = Project.objects.get(pk=project_id)
         project.description = markdown.markdown(bleach.clean(project.description, strip=True), extensions=['markdown.extensions.fenced_code'])
         p2 = Project.objects.get(pk=project_id)
-        print "This is the unchanged? project object: ", p2.description
         user_profile = UserProfile.objects.get(email=request.session['email'])
         submissions_list = Submission.objects.filter(project=project)
     except Project.DoesNotExist:
@@ -198,7 +197,6 @@ def _get_tags(tag_string):
             tag_object.save()
         if tag_object not in tag_objects_list:
             tag_objects_list.append(tag_object)
-    print "this is the tag objects list: ", tag_objects_list
     return tag_objects_list
 
 
@@ -231,7 +229,6 @@ def edit_project(request, project_id):
     """
     try:
         project = Project.objects.get(pk=project_id)
-        print "This is the unchanged project: ", project.description
     except Project.DoesNotExist:
         raise Http404("Project does not exist")
     # check whether the user is the one who created this project

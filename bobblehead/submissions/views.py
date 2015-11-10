@@ -91,14 +91,12 @@ def add_new_comment(request, submission_id):
             comment.save()
             submission.comments.add(comment)
         else:
-            print comment_form.errors
             raise Http404('Form is not valid')
     comments_list = []
     for comment in submission.comments.order_by('-posted'):
         comment.content = markdown.markdown(comment.content, extensions=['markdown.extensions.fenced_code'])
         comments_list.append(comment)
     submission.description = markdown.markdown(submission.description, extensions=['markdown.extensions.fenced_code'])
-    context = {'submission': submission, 'comments_list': comments_list, 'user_email':request.session['email']}
     # return render(request, 'submissions/show_submission.html', context)
     return HttpResponseRedirect('/submissions/show/' + str(submission_id))
 
@@ -118,15 +116,12 @@ def edit_comment(request, sub_id, comment_id):
             comment = comment_form.save(commit=False)
             comment.user = UserProfile.objects.get(email=request.session['email'])
             # comment.content = bleach.clean(comment.content, strip=True)
-            print "Comment post bleach: ", comment.content
             # comment.content = markdown.markdown(comment.content)
-            print "this is the comment content: ", comment.content
             comment.save()
             submission.comments.add(comment)
             return HttpResponseRedirect('/submissions/show/' + str(sub_id))
         else:
-            print "comment wasn't valid!"
-            print comment_form.errors
+            raise Http404("Form is not valid")
     elif request.method == 'GET':
         c_edit = comment
         # c_edit.content = bleach.clean(c_edit.content, strip=True)
